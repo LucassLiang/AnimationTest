@@ -30,7 +30,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void initToolbar() {
-        binding.toolbarLayout.setTitle("RecyclerView");
+        binding.toolbarLayout.setTitle("Tree");
         binding.toolbar.inflateMenu(R.menu.menu_item);
         binding.toolbar.setOnMenuItemClickListener(this);
     }

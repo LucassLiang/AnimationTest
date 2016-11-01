@@ -29,20 +29,19 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    android:minHeight="100dp"
+                    android:layout_height="250dp"
+                    android:minHeight="?attr/actionBarSize"
                     android:scaleType="centerCrop"
+                    android:src="@mipmap/tree"
                     app:layout_collapseMode="parallax"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+                    app:layout_scrollFlags="scroll|enterAlways" />
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+                    app:layout_scrollFlags="scroll|enterAlways">
 
                 </android.support.v7.widget.Toolbar>
 
@@ -56,10 +55,16 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </android.support.v4.widget.NestedScrollView>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
