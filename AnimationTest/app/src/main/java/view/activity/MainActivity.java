@@ -5,22 +5,33 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener {
+import view.adapter.PictureAdapter;
+
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
     private ActivityMainBinding binding;
+    private RecyclerView.Adapter mAdadpter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.actionBarLayout.addOnOffsetChangedListener(this);
     }
 
     private void initView() {
@@ -36,12 +47,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void initRecyclerView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setSmoothScrollbarEnabled(true);
-        linearLayoutManager.setAutoMeasureEnabled(true);
-        binding.recyclerView.setLayoutManager(linearLayoutManager);
-        binding.recyclerView.setHasFixedSize(true);
-        binding.recyclerView.setNestedScrollingEnabled(false);
+        GridLayoutManager manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
+        mAdadpter = new PictureAdapter();
+        binding.recyclerView.setLayoutManager(manager);
+        binding.recyclerView.setAdapter(mAdadpter);
     }
 
     @Override
@@ -61,5 +70,16 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             startActivity(intent);
         }
         return true;
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        binding.srlLayout.setEnabled(verticalOffset == 0);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        binding.actionBarLayout.removeOnOffsetChangedListener(this);
     }
 }

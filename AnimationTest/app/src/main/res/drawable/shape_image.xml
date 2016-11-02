@@ -7,6 +7,6 @@
         android:color="@color/black" />
     <solid android:color="?attr/colorButtonNormal" />
     <size
-        android:width="10dp"
-        android:height="10dp" />
+        android:width="50dp"
+        android:height="50dp" />
 </shape>
