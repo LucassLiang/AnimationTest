@@ -1,7 +1,10 @@
 package view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
@@ -10,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewAnimationUtils;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -84,29 +89,35 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 startActivity(intent);
                 break;
             case R.id.action_change:
-//                View view = binding.getRoot();
-//                float endRadius = getWindowManager().getDefaultDisplay().getHeight();
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    int centerX = (view.getLeft() + view.getRight()) / 2;
-//                    int centerY = (view.getBottom() + view.getBottom()) / 2;
-//                    Animator animation = ViewAnimationUtils.createCircularReveal(view,
-//                            centerX,
-//                            centerY,
-//                            0,
-//                            endRadius);
-//                    animation.setDuration(1000);
-//                    animation.addListener(new AnimatorListenerAdapter() {
-//                        @Override
-//                        public void onAnimationEnd(Animator animation) {
-                intent = new Intent(MainActivity.this, ThemeActivity.class);
-                startActivity(intent);
-//                        }
-//                    });
-//                    animation.start();
-//                }
+                startAnimation();
                 break;
         }
         return true;
+    }
+
+    private void startAnimation() {
+        View view = binding.getRoot();
+        float endRadius = getWindowManager().getDefaultDisplay().getHeight();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int centerX = (view.getRight() - view.getLeft()) / 2;
+            int centerY = (view.getBottom() - view.getTop()) / 2;
+            Animator animation = ViewAnimationUtils.createCircularReveal(view,
+                    centerX,
+                    centerY,
+                    0,
+                    endRadius);
+            animation.setDuration(1000);
+            animation.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(intent);
+                }
+            });
+            animation.start();
+        }
     }
 
     @Override
