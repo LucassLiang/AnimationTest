@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -19,7 +18,7 @@ import view.adapter.PictureAdapter;
 
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
     private ActivityMainBinding binding;
-    private RecyclerView.Adapter mAdadpter;
+    private PictureAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +47,21 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void initRecyclerView() {
         GridLayoutManager manager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-        mAdadpter = new PictureAdapter();
+        manager.setSmoothScrollbarEnabled(true);
+        manager.setAutoMeasureEnabled(true);
         binding.recyclerView.setLayoutManager(manager);
-        binding.recyclerView.setAdapter(mAdadpter);
+
+        mAdapter = new PictureAdapter(binding.recyclerView, R.layout.item_picture);
+        binding.recyclerView.setAdapter(mAdapter);
+        getData();
+        binding.recyclerView.setHasFixedSize(true);
+    }
+
+    private void getData() {
+        for (int i = 0; i < 10; i++) {
+            mAdapter.add(1);
+        }
+        mAdapter.notifyItemRangeInserted(0, mAdapter.size());
     }
 
     @Override
@@ -58,6 +69,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
+                mAdapter.clearAll();
+                getData();
                 binding.srlLayout.setRefreshing(false);
             }
         }, 200);
