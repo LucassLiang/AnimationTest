@@ -1,12 +1,12 @@
 package view.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -16,7 +16,7 @@ import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 
 import view.adapter.PictureAdapter;
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
 
@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         for (int i = 0; i < 10; i++) {
             mAdapter.add(1);
         }
-        mAdapter.notifyItemRangeInserted(0, mAdapter.size());
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -78,9 +78,33 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.action_next) {
-            Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-            startActivity(intent);
+        switch (item.getItemId()) {
+            case R.id.action_next:
+                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_change:
+//                View view = binding.getRoot();
+//                float endRadius = getWindowManager().getDefaultDisplay().getHeight();
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    int centerX = (view.getLeft() + view.getRight()) / 2;
+//                    int centerY = (view.getBottom() + view.getBottom()) / 2;
+//                    Animator animation = ViewAnimationUtils.createCircularReveal(view,
+//                            centerX,
+//                            centerY,
+//                            0,
+//                            endRadius);
+//                    animation.setDuration(1000);
+//                    animation.addListener(new AnimatorListenerAdapter() {
+//                        @Override
+//                        public void onAnimationEnd(Animator animation) {
+                intent = new Intent(MainActivity.this, ThemeActivity.class);
+                startActivity(intent);
+//                        }
+//                    });
+//                    animation.start();
+//                }
+                break;
         }
         return true;
     }
