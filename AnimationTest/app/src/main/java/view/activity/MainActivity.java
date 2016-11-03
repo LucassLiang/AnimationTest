@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -97,11 +99,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void startAnimation() {
         View view = binding.getRoot();
-        float endRadius = getWindowManager().getDefaultDisplay().getHeight();
+        int height = getWindowManager().getDefaultDisplay().getHeight();
+        int width = getWindowManager().getDefaultDisplay().getWidth();
+        int endRadius = (int) Math.sqrt(height * height + width * width);
+
+        ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
+        ImageView targetView = new ImageView(MainActivity.this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int centerX = (view.getRight() - view.getLeft()) / 2;
-            int centerY = (view.getBottom() - view.getTop()) / 2;
-            Animator animation = ViewAnimationUtils.createCircularReveal(view,
+            targetView.setImageDrawable(getDrawable(R.drawable.shape_image));
+        }
+        viewGroup.addView(targetView, viewGroup.getWidth(), viewGroup.getHeight());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View theme = binding.toolbar.getChildAt(0);
+            int centerX = (theme.getRight() + theme.getLeft()) / 2;
+            int centerY = (theme.getBottom() + theme.getTop()) / 2;
+            Animator animation = ViewAnimationUtils.createCircularReveal(targetView,
                     centerX,
                     centerY,
                     0,
