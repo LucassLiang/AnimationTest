@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
+    private long lastTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,5 +173,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     break;
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - lastTime > 1000) {
+            Snackbar.make(binding.clMain, "Are you sure to quit?", Snackbar.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
+        }
+        lastTime = System.currentTimeMillis();
     }
 }
