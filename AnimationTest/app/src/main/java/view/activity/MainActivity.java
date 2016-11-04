@@ -23,6 +23,7 @@ import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 import view.adapter.PictureAdapter;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
+    public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
 
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 break;
             case R.id.action_change:
                 Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
                 break;
         }
         return true;
@@ -159,5 +160,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onPause() {
         super.onPause();
         binding.actionBarLayout.removeOnOffsetChangedListener(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    recreate();
+                    break;
+            }
+        }
     }
 }

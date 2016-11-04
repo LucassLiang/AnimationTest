@@ -32,4 +32,10 @@ public class ThemeActivity extends AppCompatActivity {
         }
         recreate();
     }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
 }
