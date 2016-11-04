@@ -50,4 +50,10 @@ public class NotificationActivity extends AppCompatActivity {
         }
         manager.notify(0, notification);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
 }

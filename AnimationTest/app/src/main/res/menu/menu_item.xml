@@ -2,14 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_next"
-        android:orderInCategory="90"
-        android:title="next"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_change"
+        android:title="theme" />
 
     <item
-        android:id="@+id/action_change"
-        android:orderInCategory="80"
-        android:title="theme"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_next"
+        android:title="next" />
 </menu>

@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -87,11 +86,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-                startActivity(intent);
+                startAnimation();
                 break;
             case R.id.action_change:
-                startAnimation();
+                Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
+                startActivity(intent);
                 break;
         }
         return true;
@@ -103,12 +102,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final int endRadius = (int) Math.sqrt(height * height + width * width);
 
         final ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
-        final RelativeLayout targetView = new RelativeLayout(MainActivity.this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            targetView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        }
-        viewGroup.addView(targetView, viewGroup.getWidth(), viewGroup.getHeight());
-
+        final View targetView = getLayoutInflater().inflate(R.layout.activity_notification, viewGroup, false);
+        binding.clMain.addView(targetView, binding.clMain.getWidth(), binding.clMain.getHeight());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             View theme = binding.toolbar.getChildAt(0);
             final int centerX = (theme.getRight() + theme.getLeft()) / 2;
@@ -124,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 public void onAnimationEnd(final Animator animation) {
                     super.onAnimationEnd(animation);
 
-                    Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
+                    Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
@@ -142,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
                                         super.onAnimationEnd(animation);
-                                        viewGroup.removeView(targetView);
+                                        binding.clMain.removeView(targetView);
                                     }
                                 });
                                 animator.start();

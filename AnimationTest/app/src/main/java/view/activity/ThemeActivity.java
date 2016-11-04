@@ -32,10 +32,4 @@ public class ThemeActivity extends AppCompatActivity {
         }
         recreate();
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }
 }
