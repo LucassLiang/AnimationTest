@@ -4,6 +4,10 @@
 
     <data>
 
+        <!--<variable-->
+            <!--name="data"-->
+            <!--type="" />-->
+
     </data>
 
     <LinearLayout
@@ -17,7 +21,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/shape_image" />
-
+             />
+        <!--android:src="@{}"-->
     </LinearLayout>
 </layout>

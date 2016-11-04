@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import view.entity.Image;
+
 /**
  * Created by lucas on 11/2/16.
  */
 
 public class PictureAdapter extends RecyclerView.Adapter {
-    private List<Integer> pictures = new ArrayList<>();
+    private List<Image> pictures = new ArrayList<>();
     private ViewGroup viewGroup;
     private int layoutRes;
     private PictureAdapter.PictureViewHolder.pictureClick click;
@@ -35,8 +37,12 @@ public class PictureAdapter extends RecyclerView.Adapter {
 
     }
 
-    public void add(int position) {
-        pictures.add(position);
+    public void add(Image image) {
+        pictures.add(image);
+    }
+
+    public void addAll(List<Image> imgs) {
+        pictures.addAll(imgs);
     }
 
     public void remove(int position) {
@@ -49,6 +55,10 @@ public class PictureAdapter extends RecyclerView.Adapter {
 
     public int size() {
         return pictures.size();
+    }
+
+    public List<Image> getData() {
+        return pictures;
     }
 
     @Override

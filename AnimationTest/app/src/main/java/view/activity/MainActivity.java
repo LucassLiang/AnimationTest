@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,12 @@ import android.view.ViewGroup;
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import view.adapter.PictureAdapter;
+import view.dto.ImageDTO;
+import view.service.ApiService;
 import view.util.AnimationUtil;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
@@ -46,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void initToolbar() {
-        binding.toolbarLayout.setTitle("Tree");
+        binding.toolbarLayout.setTitle("Album");
         binding.toolbar.inflateMenu(R.menu.menu_item);
         binding.toolbar.setOnMenuItemClickListener(this);
     }
@@ -64,10 +70,27 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void getData() {
-        for (int i = 0; i < 10; i++) {
-            mAdapter.add(1);
-        }
-        mAdapter.notifyDataSetChanged();
+        ApiService.getPictureService().getPicture()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ImageDTO>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("TAG", "onError: " + e.toString());
+                    }
+
+                    @Override
+                    public void onNext(ImageDTO imageDTO) {
+                        mAdapter.addAll(imageDTO.getImgs());
+                        mAdapter.notifyDataSetChanged();
+                        Log.e("TAG", "onNext: " + mAdapter.getData().toString());
+                    }
+                });
     }
 
     @Override
