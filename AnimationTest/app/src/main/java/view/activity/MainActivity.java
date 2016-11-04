@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -98,22 +98,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void startAnimation() {
-        View view = binding.getRoot();
         int height = getWindowManager().getDefaultDisplay().getHeight();
         int width = getWindowManager().getDefaultDisplay().getWidth();
-        int endRadius = (int) Math.sqrt(height * height + width * width);
+        final int endRadius = (int) Math.sqrt(height * height + width * width);
 
-        ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
-        ImageView targetView = new ImageView(MainActivity.this);
+        final ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
+        final RelativeLayout targetView = new RelativeLayout(MainActivity.this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            targetView.setImageDrawable(getDrawable(R.drawable.shape_image));
+            targetView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
         viewGroup.addView(targetView, viewGroup.getWidth(), viewGroup.getHeight());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             View theme = binding.toolbar.getChildAt(0);
-            int centerX = (theme.getRight() + theme.getLeft()) / 2;
-            int centerY = (theme.getBottom() + theme.getTop()) / 2;
+            final int centerX = (theme.getRight() + theme.getLeft()) / 2;
+            final int centerY = (theme.getBottom() + theme.getTop()) / 2;
             Animator animation = ViewAnimationUtils.createCircularReveal(targetView,
                     centerX,
                     centerY,
@@ -122,11 +121,34 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             animation.setDuration(1000);
             animation.addListener(new AnimatorListenerAdapter() {
                 @Override
-                public void onAnimationEnd(Animator animation) {
+                public void onAnimationEnd(final Animator animation) {
                     super.onAnimationEnd(animation);
+
                     Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                    targetView.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                Animator animator = ViewAnimationUtils.createCircularReveal(targetView,
+                                        centerX,
+                                        centerY,
+                                        endRadius,
+                                        0);
+                                animator.setDuration(1000);
+                                animator.addListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        viewGroup.removeView(targetView);
+                                    }
+                                });
+                                animator.start();
+                            }
+                        }
+                    }, 1000);
                 }
             });
             animation.start();
