@@ -1,10 +1,7 @@
 package view.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
@@ -15,13 +12,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 
 import view.adapter.PictureAdapter;
+import view.util.AnimationUtil;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
     public static final int REQUEST_CODE = 1;
@@ -104,53 +101,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         int width = getWindowManager().getDefaultDisplay().getWidth();
         final int endRadius = (int) Math.sqrt(height * height + width * width);
 
-        final ViewGroup viewGroup = (ViewGroup) getWindow().getDecorView();
-        final View targetView = getLayoutInflater().inflate(R.layout.activity_notification, viewGroup, false);
-        binding.clMain.addView(targetView, binding.clMain.getWidth(), binding.clMain.getHeight());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            View theme = binding.toolbar.getChildAt(0);
-            final int centerX = (theme.getRight() + theme.getLeft()) / 2;
-            final int centerY = (theme.getBottom() + theme.getTop()) / 2;
-            Animator animation = ViewAnimationUtils.createCircularReveal(targetView,
-                    centerX,
-                    centerY,
-                    0,
-                    endRadius);
-            animation.setDuration(1000);
-            animation.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(final Animator animation) {
-                    super.onAnimationEnd(animation);
-
-                    Intent intent = new Intent(MainActivity.this, NotificationActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
-                    targetView.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                                Animator animator = ViewAnimationUtils.createCircularReveal(targetView,
-                                        centerX,
-                                        centerY,
-                                        endRadius,
-                                        0);
-                                animator.setDuration(1000);
-                                animator.addListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        binding.clMain.removeView(targetView);
-                                    }
-                                });
-                                animator.start();
-                            }
-                        }
-                    }, 1000);
-                }
-            });
-            animation.start();
-        }
+        final ViewGroup container = binding.clMain;
+        final View targetView = getLayoutInflater().inflate(R.layout.activity_notification, container, false);
+        container.addView(targetView, container.getWidth(), container.getHeight());
+        View next = binding.toolbar.getChildAt(0);
+        final int centerX = (next.getRight() + next.getLeft()) / 2;
+        final int centerY = (next.getBottom() + next.getTop()) / 2;
+        AnimationUtil.startActivityCircleReveal(this, container, targetView, centerX, centerY, endRadius);
     }
 
     @Override

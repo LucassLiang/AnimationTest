@@ -17,6 +17,7 @@ public class PictureAdapter extends RecyclerView.Adapter {
     private List<Integer> pictures = new ArrayList<>();
     private ViewGroup viewGroup;
     private int layoutRes;
+    private PictureAdapter.PictureViewHolder.pictureClick click;
 
     public PictureAdapter(ViewGroup viewGroup, int layoutRes) {
         this.viewGroup = viewGroup;
@@ -80,6 +81,10 @@ public class PictureAdapter extends RecyclerView.Adapter {
                 views.put(viewId, view);
             }
             return (T) view;
+        }
+
+        public interface pictureClick {
+            void onClick(int position);
         }
     }
 }
