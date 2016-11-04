@@ -70,13 +70,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void getData() {
+        binding.srlLayout.setRefreshing(true);
         ApiService.getPictureService().getPicture()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ImageDTO>() {
                     @Override
                     public void onCompleted() {
-
+                        binding.srlLayout.setRefreshing(false);
                     }
 
                     @Override
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void onNext(ImageDTO imageDTO) {
                         mAdapter.addAll(imageDTO.getImgs());
                         mAdapter.notifyDataSetChanged();
-                        Log.e("TAG", "onNext: " + mAdapter.getData().toString());
                     }
                 });
     }
@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void run() {
                 mAdapter.clearAll();
                 getData();
-                binding.srlLayout.setRefreshing(false);
             }
         }, 200);
     }
