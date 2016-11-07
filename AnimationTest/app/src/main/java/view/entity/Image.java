@@ -756,6 +756,27 @@ public class Image {
         public void setContactName(String contactName) {
             this.contactName = contactName;
         }
+
+        @Override
+        public String toString() {
+            return "Owner{" +
+                    "userName='" + userName + '\'' +
+                    ", userId='" + userId + '\'' +
+                    ", userSign='" + userSign + '\'' +
+                    ", isSelf='" + isSelf + '\'' +
+                    ", portrait='" + portrait + '\'' +
+                    ", isVip='" + isVip + '\'' +
+                    ", isLanv='" + isLanv + '\'' +
+                    ", isJiaju='" + isJiaju + '\'' +
+                    ", isHunjia='" + isHunjia + '\'' +
+                    ", orgName='" + orgName + '\'' +
+                    ", resUrl='" + resUrl + '\'' +
+                    ", cert='" + cert + '\'' +
+                    ", budgetNum='" + budgetNum + '\'' +
+                    ", lanvName='" + lanvName + '\'' +
+                    ", contactName='" + contactName + '\'' +
+                    '}';
+        }
     }
 
     @Override

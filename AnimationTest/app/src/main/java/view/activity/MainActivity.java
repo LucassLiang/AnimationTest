@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         manager.setAutoMeasureEnabled(true);
         binding.recyclerView.setLayoutManager(manager);
 
-        mAdapter = new PictureAdapter(binding.recyclerView, R.layout.item_picture);
+        mAdapter = new PictureAdapter(this);
         binding.recyclerView.setAdapter(mAdapter);
         getData();
         binding.recyclerView.setHasFixedSize(true);
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                mAdapter.clearAll();
+                mAdapter.clear();
                 getData();
             }
         }, 200);
@@ -130,6 +131,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final int centerX = (next.getRight() + next.getLeft()) / 2;
         final int centerY = (next.getBottom() + next.getTop()) / 2;
         AnimationUtil.startActivityCircleReveal(this, container, targetView, centerX, centerY, endRadius);
+    }
+
+    public View.OnClickListener onItemClick() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(binding.getRoot().getContext(), "aaaa", Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     @Override

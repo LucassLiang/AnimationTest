@@ -1,103 +1,30 @@
 package view.adapter;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context;
 
 import com.example.lucas.animationtest.R;
+import com.example.lucas.animationtest.databinding.ItemPictureBinding;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import view.entity.Image;
+import view.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/2/16.
  */
 
-public class PictureAdapter extends RecyclerView.Adapter {
-    private List<Image> pictures = new ArrayList<>();
-    private ViewGroup viewGroup;
-    private int layoutRes;
-//    private PictureAdapter.PictureViewHolder.pictureClick click;
+public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBinding> {
 
-    public PictureAdapter(ViewGroup viewGroup, int layoutRes) {
-        this.viewGroup = viewGroup;
-        this.layoutRes = layoutRes;
+    public PictureAdapter(Context mContext) {
+        super(mContext);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        RecyclerView.ViewHolder pictureViewHolder = PictureViewHolder.getViewHolder(viewGroup, layoutRes);
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_picture, parent, false);
-        RecyclerView.ViewHolder viewHolder = null;
-        return viewHolder;
+    public int getItemViewType(int position) {
+        return R.layout.item_picture;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+    protected void onBindViewDataBinding(BaseViewHolder<ItemPictureBinding> holder, int position) {
+        super.onBindViewDataBinding(holder, position);
+        holder.getbinding().setData(get(position));
     }
-
-    public void add(Image image) {
-        pictures.add(image);
-    }
-
-    public void addAll(List<Image> imgs) {
-        pictures.addAll(imgs);
-    }
-
-    public void remove(int position) {
-        pictures.remove(position);
-    }
-
-    public void clearAll() {
-        pictures.clear();
-    }
-
-    public int size() {
-        return pictures.size();
-    }
-
-    public List<Image> getData() {
-        return pictures;
-    }
-
-    @Override
-    public int getItemCount() {
-        return pictures.size();
-    }
-
-//    static class PictureViewHolder extends RecyclerView.ViewHolder {
-//        private SparseArray<View> views;
-//        private View mView;
-//        private ViewGroup mViewGroup;
-//
-//        public PictureViewHolder(View view, ViewGroup viewGroup) {
-//            super(view);
-//            mView = view;
-//            mViewGroup = viewGroup;
-//            views = new SparseArray<>();
-//        }
-//
-//        public static PictureViewHolder getViewHolder(ViewGroup viewGroup, int layoutRes) {
-//            View pictureView = LayoutInflater.from(viewGroup.getContext()).inflate(layoutRes, viewGroup, false);
-//            PictureViewHolder pictureViewHolder = new PictureViewHolder(pictureView, viewGroup);
-//            return pictureViewHolder;
-//        }
-//
-//        public <T extends View> T getView(int viewId) {
-//            View view = getView(viewId);
-//            if (view == null) {
-//                view = mView.findViewById(viewId);
-//                views.put(viewId, view);
-//            }
-//            return (T) view;
-//        }
-//
-//        public interface pictureClick {
-//            void onClick(int position);
-//        }
-//    }
 }
