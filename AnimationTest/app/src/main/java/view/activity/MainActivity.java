@@ -21,12 +21,15 @@ import android.widget.Toast;
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 
+import java.util.List;
+
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import view.adapter.ImagePagerAdapter;
 import view.adapter.PictureAdapter;
 import view.dto.ImageDTO;
+import view.entity.Image;
 import view.service.ApiService;
 import view.util.AnimationUtil;
 
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.vpImgs.setAlpha(0);
         binding.vpImgs.setVisibility(View.GONE);
         binding.vpImgs.setAdapter(vpAdapter);
-        binding.vpImgs.setOffscreenPageLimit(5);
+        binding.vpImgs.setOffscreenPageLimit(3);
     }
 
     private void initToolbar() {
@@ -103,9 +106,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
                     @Override
                     public void onNext(ImageDTO imageDTO) {
-                        mAdapter.addAll(imageDTO.getImgs());
-                        mAdapter.notifyDataSetChanged();
-                        vpAdapter.addAll(imageDTO.getImgs());
+                        List<Image> images = imageDTO.getImgs();
+                        for (int i = 0; i < images.size() - 1; i++) {
+                            mAdapter.add(images.get(i));
+                            vpAdapter.add(images.get(i));
+                        }
+                        mAdapter.notifyItemRangeInserted(0, mAdapter.size());
                         vpAdapter.notifyDataSetChanged();
                     }
                 });

@@ -50,7 +50,7 @@ public class ImagePagerAdapter extends PagerAdapter implements List<Image> {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView(binding.getRoot());
+        container.removeView(binding.ivPicture);
     }
 
     @Override
