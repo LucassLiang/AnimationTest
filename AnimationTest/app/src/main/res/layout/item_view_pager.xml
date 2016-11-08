@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="data"
+            type="view.entity.Image" />
 
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <uk.co.senab.photoview.PhotoView
-            android:id="@+id/pv_img"
+            android:id="@+id/iv_picture"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:url="@{data.thumbLargeUrl}" />
 
     </LinearLayout>
 </layout>

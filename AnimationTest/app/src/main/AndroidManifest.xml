@@ -30,10 +30,6 @@
             android:name="view.activity.ThemeActivity"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name="view.activity.ZoomInActivity"
-            android:screenOrientation="portrait" />
-
     </application>
 
 </manifest>

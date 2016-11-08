@@ -164,4 +164,8 @@ public class ListAdapter<D, B extends ViewDataBinding> extends BaseAdapter<D, B>
     public List<D> subList(int fromIndex, int toIndex) {
         return data.subList(fromIndex, toIndex);
     }
+
+    public List<D> getData() {
+        return data;
+    }
 }

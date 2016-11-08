@@ -11,4 +11,6 @@ import view.viewholder.BaseViewHolder;
 
 public abstract class ItemClickListener {
     public abstract ItemClickListener itemClickListener(View view, BaseAdapter adapter, BaseViewHolder viewHolder);
+
+    public abstract ItemClickListener itemClickListener(View view, int position);
 }

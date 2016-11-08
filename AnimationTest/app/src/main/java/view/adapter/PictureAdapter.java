@@ -1,24 +1,25 @@
 package view.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ItemPictureBinding;
 
-import view.activity.ZoomInActivity;
 import view.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/2/16.
  */
 
-public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBinding> implements View.OnClickListener {
+public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBinding> {
+    private ItemPictureBinding binding;
+    private View.OnClickListener mListener;
+    private int clickPosition;
 
-    public PictureAdapter(Context mContext) {
+    public PictureAdapter(Context mContext, View.OnClickListener mListener) {
         super(mContext);
+        this.mListener = mListener;
     }
 
     @Override
@@ -27,17 +28,21 @@ public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBi
     }
 
     @Override
-    protected void onBindViewDataBinding(BaseViewHolder<ItemPictureBinding> holder, int position) {
+    protected void onBindViewDataBinding(final BaseViewHolder<ItemPictureBinding> holder, final int position) {
         super.onBindViewDataBinding(holder, position);
-        holder.getbinding().setData(get(position));
+        binding = holder.getbinding();
+        binding.setData(get(position));
 
-        holder.getbinding().getRoot().setOnClickListener(this);
+        binding.ivPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickPosition = position;
+                mListener.onClick(v);
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(v.getContext(), ZoomInActivity.class);
-        v.getContext().startActivity(intent);
-        ((Activity) v.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    public int getClickPosition() {
+        return clickPosition;
     }
 }

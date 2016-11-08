@@ -1,5 +1,7 @@
 package view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -22,16 +24,20 @@ import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import view.adapter.ImagePagerAdapter;
 import view.adapter.PictureAdapter;
 import view.dto.ImageDTO;
 import view.service.ApiService;
 import view.util.AnimationUtil;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
+        , Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
     public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
+    private ImagePagerAdapter vpAdapter;
     private long lastTime = 0;
+    private boolean isFullScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +53,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void initView() {
+        initViewPager();
         initToolbar();
         initRecyclerView();
         binding.srlLayout.setOnRefreshListener(this);
+    }
+
+    private void initViewPager() {
+        vpAdapter = new ImagePagerAdapter();
+        binding.vpImgs.setAlpha(0);
+        binding.vpImgs.setVisibility(View.GONE);
+        binding.vpImgs.setAdapter(vpAdapter);
+        binding.vpImgs.setOffscreenPageLimit(5);
     }
 
     private void initToolbar() {
@@ -64,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         manager.setAutoMeasureEnabled(true);
         binding.recyclerView.setLayoutManager(manager);
 
-        mAdapter = new PictureAdapter(this);
+        mAdapter = new PictureAdapter(binding.getRoot().getContext(), this);
         binding.recyclerView.setAdapter(mAdapter);
         getData();
         binding.recyclerView.setHasFixedSize(true);
@@ -90,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void onNext(ImageDTO imageDTO) {
                         mAdapter.addAll(imageDTO.getImgs());
                         mAdapter.notifyDataSetChanged();
+                        vpAdapter.addAll(imageDTO.getImgs());
+                        vpAdapter.notifyDataSetChanged();
                     }
                 });
     }
@@ -100,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void run() {
                 mAdapter.clear();
+                vpAdapter.clear();
                 getData();
             }
         }, 200);
@@ -166,11 +184,40 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onBackPressed() {
-        if (System.currentTimeMillis() - lastTime > 1000) {
-            Snackbar.make(binding.clMain, "Are you sure to quit?", Snackbar.LENGTH_SHORT).show();
+        if (isFullScreen) {
+            binding.vpImgs.animate()
+                    .alpha(0)
+                    .setDuration(500)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            binding.vpImgs.setVisibility(View.GONE);
+                        }
+                    })
+                    .start();
+            isFullScreen = false;
         } else {
-            super.onBackPressed();
+            if (System.currentTimeMillis() - lastTime > 1000) {
+                Snackbar.make(binding.clMain, "Are you sure to quit?", Snackbar.LENGTH_SHORT).show();
+            } else {
+                super.onBackPressed();
+            }
+            lastTime = System.currentTimeMillis();
         }
-        lastTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onClick(final View v) {
+        binding.vpImgs.animate().alpha(1).setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        int position = mAdapter.getClickPosition();
+                        binding.vpImgs.setCurrentItem(position, false);
+                        binding.vpImgs.setVisibility(View.VISIBLE);
+                        binding.actionBarLayout.setExpanded(false);
+                    }
+                }).start();
+        isFullScreen = true;
     }
 }

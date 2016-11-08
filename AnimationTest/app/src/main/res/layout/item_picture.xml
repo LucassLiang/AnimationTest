@@ -8,21 +8,13 @@
             name="data"
             type="view.entity.Image" />
 
-        <variable
-            name="adapter"
-            type="view.adapter.BaseAdapter" />
-
-        <variable
-            name="vh"
-            type="view.viewholder.BaseViewHolder" />
-
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/iv_picture"
@@ -30,7 +22,6 @@
             android:layout_height="120dp"
             android:scaleType="centerCrop"
             app:url="@{data.thumbnailUrl}" />
-        <!--app:adapter="@{adapter}"-->
-        <!--app:vh="@{vh}"-->
+
     </LinearLayout>
 </layout>
