@@ -31,6 +31,7 @@ import view.adapter.PictureAdapter;
 import view.dto.ImageDTO;
 import view.entity.Image;
 import view.service.ApiService;
+import view.transformer.ImagePageTransformer;
 import view.util.AnimationUtil;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
     private ImagePagerAdapter vpAdapter;
+
     private long lastTime = 0;
     private boolean isFullScreen = false;
 
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.vpImgs.setVisibility(View.GONE);
         binding.vpImgs.setAdapter(vpAdapter);
         binding.vpImgs.setOffscreenPageLimit(3);
+        ImagePageTransformer transformer = new ImagePageTransformer();
+        binding.vpImgs.setPageTransformer(true, transformer);
     }
 
     private void initToolbar() {
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             mAdapter.add(images.get(i));
                             vpAdapter.add(images.get(i));
                         }
-                        mAdapter.notifyItemRangeInserted(0, mAdapter.size());
+                        mAdapter.notifyDataSetChanged();
                         vpAdapter.notifyDataSetChanged();
                     }
                 });
