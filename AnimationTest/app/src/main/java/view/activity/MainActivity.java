@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,7 +36,7 @@ import view.transformer.ImagePageTransformer;
 import view.util.AnimationUtil;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
-        , Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
+        , Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener, ViewPager.OnPageChangeListener {
     public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
@@ -70,8 +71,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.vpImgs.setVisibility(View.GONE);
         binding.vpImgs.setAdapter(vpAdapter);
         binding.vpImgs.setOffscreenPageLimit(3);
+
         ImagePageTransformer transformer = new ImagePageTransformer();
         binding.vpImgs.setPageTransformer(true, transformer);
+
+        binding.vpImgs.addOnPageChangeListener(this);
     }
 
     private void initToolbar() {
@@ -195,17 +199,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onBackPressed() {
         if (isFullScreen) {
-            binding.vpImgs.animate()
-                    .alpha(0)
-                    .setDuration(500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            binding.vpImgs.setVisibility(View.GONE);
-                        }
-                    })
-                    .start();
-            isFullScreen = false;
+            outOfFullScreen();
         } else {
             if (System.currentTimeMillis() - lastTime > 1000) {
                 Snackbar.make(binding.clMain, "Are you sure to quit?", Snackbar.LENGTH_SHORT).show();
@@ -214,6 +208,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
             lastTime = System.currentTimeMillis();
         }
+    }
+
+    private void outOfFullScreen() {
+        binding.vpImgs.animate()
+                .alpha(0)
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        binding.vpImgs.setVisibility(View.GONE);
+                    }
+                })
+                .start();
+        isFullScreen = false;
     }
 
     @Override
@@ -229,5 +237,21 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     }
                 }).start();
         isFullScreen = true;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
+        manager.scrollToPosition(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
