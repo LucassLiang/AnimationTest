@@ -2,8 +2,12 @@ package view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void initView() {
+        binding.viewBackground.setAlpha(0);
         initViewPager();
         initToolbar();
         initRecyclerView();
@@ -68,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void initViewPager() {
         vpAdapter = new ImagePagerAdapter();
-        binding.vpImgs.setAlpha(0);
         binding.vpImgs.setVisibility(View.GONE);
         binding.vpImgs.setAdapter(vpAdapter);
         binding.vpImgs.setOffscreenPageLimit(3);
@@ -205,12 +209,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     private void outOfFullScreen() {
-        binding.vpImgs.animate()
+        binding.viewBackground
+                .animate()
                 .alpha(0)
-                .setDuration(500)
+                .setDuration(300)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
                         binding.vpImgs.setVisibility(View.GONE);
                     }
                 })
@@ -220,16 +226,74 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onClick(final View v) {
-        binding.vpImgs.animate().alpha(1).setDuration(500)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        int position = mAdapter.getClickPosition();
-                        binding.vpImgs.setCurrentItem(position, false);
-                        binding.vpImgs.setVisibility(View.VISIBLE);
-                        binding.actionBarLayout.setExpanded(false);
-                    }
-                }).start();
+        int position = mAdapter.getClickPosition();
+        binding.vpImgs.setCurrentItem(position, false);
+
+        Point fromPoint = new Point();
+        Rect fromRect = new Rect();
+        v.getGlobalVisibleRect(fromRect, fromPoint);
+
+        Point toPoint = new Point();
+        Rect toRect = new Rect();
+        binding.getRoot().getGlobalVisibleRect(toRect, toPoint);
+        fromRect.offset(-toPoint.x, -toPoint.y);
+        toRect.offset(-toPoint.x, -toPoint.y);
+
+        float ratio = initZoomInPosition(position, fromRect, toRect);
+        binding.vpImgs.setPivotX(0);
+        binding.vpImgs.setPivotY(0);
+
+        initZoomInAnimation(fromRect, toRect, ratio);
+    }
+
+    private float initZoomInPosition(int position, Rect fromRect, Rect toRect) {
+        float ratio;
+        if ((float) toRect.width() / (float) toRect.height() > (float) fromRect.width() / (float) fromRect.height()) {
+            ratio = (float) fromRect.height() / (float) toRect.height();
+            int fromWidth = (int) (toRect.width() * ratio);
+            int deltaWidth = (fromWidth - toRect.width()) / 2;
+            fromRect.left -= deltaWidth;
+            fromRect.right += deltaWidth;
+        } else {
+            ratio = (float) fromRect.width() / (float) toRect.width();
+            int fromHeight = (int) (toRect.height() * ratio);
+            int deltaHeight = (fromHeight - fromRect.height()) / 2;
+            fromRect.top -= deltaHeight;
+            fromRect.bottom += deltaHeight;
+            int fromWidth = (int) (toRect.width() * ratio);
+            int deltaWidth = (fromWidth - fromRect.width()) / 2;
+            if ((position + 1) % 3 == 0) {
+                fromRect.left -= fromWidth - fromRect.width();
+            } else if ((position + 1) % 3 != 1) {
+                fromRect.left -= deltaWidth;
+                fromRect.right += deltaWidth;
+            }
+        }
+        return ratio;
+    }
+
+    private void initZoomInAnimation(Rect fromRect, Rect toRect, float ratio) {
+        AnimatorSet set = new AnimatorSet();
+        set.play(ObjectAnimator.ofFloat(binding.vpImgs, View.X, fromRect.left, toRect.left))
+                .with(ObjectAnimator.ofFloat(binding.vpImgs, View.Y, fromRect.top, toRect.top))
+                .with(ObjectAnimator.ofFloat(binding.vpImgs, View.SCALE_X, ratio, 1))
+                .with(ObjectAnimator.ofFloat(binding.vpImgs, View.SCALE_Y, ratio, 1));
+
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                pictureZoomIn();
+            }
+        });
+        set.setDuration(300);
+        set.start();
+    }
+
+    private void pictureZoomIn() {
+        binding.viewBackground.setAlpha(1);
+        binding.vpImgs.setVisibility(View.VISIBLE);
+        binding.actionBarLayout.setExpanded(false);
         isFullScreen = true;
     }
 

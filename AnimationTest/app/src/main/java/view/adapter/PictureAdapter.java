@@ -45,4 +45,8 @@ public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBi
     public int getClickPosition() {
         return clickPosition;
     }
+
+    public ItemPictureBinding getBinding() {
+        return binding;
+    }
 }

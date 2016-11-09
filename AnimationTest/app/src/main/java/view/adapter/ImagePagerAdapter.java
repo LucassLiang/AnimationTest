@@ -53,6 +53,10 @@ public class ImagePagerAdapter extends PagerAdapter implements List<Image> {
         container.removeView(binding.ivPicture);
     }
 
+    public ItemViewPagerBinding getBinding() {
+        return binding;
+    }
+
     @Override
     public int size() {
         return imgs.size();
