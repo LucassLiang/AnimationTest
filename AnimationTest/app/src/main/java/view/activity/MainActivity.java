@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
@@ -50,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initView();
+        getData();
     }
 
     @Override
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         initViewPager();
         initToolbar();
         initRecyclerView();
+        binding.srlLayout.setEnabled(false);
         binding.srlLayout.setOnRefreshListener(this);
     }
 
@@ -92,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         mAdapter = new PictureAdapter(binding.getRoot().getContext(), this);
         binding.recyclerView.setAdapter(mAdapter);
-        getData();
         binding.recyclerView.setHasFixedSize(true);
     }
 
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     @Override
                     public void onCompleted() {
                         binding.srlLayout.setRefreshing(false);
+                        binding.srlLayout.setEnabled(true);
                     }
 
                     @Override
@@ -132,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void run() {
                 mAdapter.clear();
                 vpAdapter.clear();
+                binding.vpImgs.removeAllViews();
+                vpAdapter.notifyDataSetChanged();
                 getData();
             }
         }, 200);
@@ -163,15 +166,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final int centerX = (next.getRight() + next.getLeft()) / 2;
         final int centerY = (next.getBottom() + next.getTop()) / 2;
         AnimationUtil.startActivityCircleReveal(this, container, targetView, centerX, centerY, endRadius);
-    }
-
-    public View.OnClickListener onItemClick() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(binding.getRoot().getContext(), "aaaa", Toast.LENGTH_SHORT).show();
-            }
-        };
     }
 
     @Override
