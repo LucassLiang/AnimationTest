@@ -13,7 +13,7 @@ public class ImagePageTransformer implements ViewPager.PageTransformer {
     @Override
     public void transformPage(View page, float position) {
         if (position < -1) {
-            page.setAlpha(0f);
+            page.setAlpha(1f);
         } else if (position <= 0) {
             page.setAlpha(1);
             page.setTranslationX(0);
