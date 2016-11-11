@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,8 +61,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.actionBarLayout.addOnOffsetChangedListener(this);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        binding.actionBarLayout.removeOnOffsetChangedListener(this);
+    }
+
     private void initView() {
-        binding.viewBackground.setAlpha(0);
         initViewPager();
         initToolbar();
         initRecyclerView();
@@ -75,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         binding.vpImgs.setAdapter(vpAdapter);
         binding.vpImgs.setOffscreenPageLimit(3);
 
+        //init pager change's animator in ViewPager
         ImagePageTransformer transformer = new ImagePageTransformer();
         binding.vpImgs.setPageTransformer(true, transformer);
 
@@ -176,12 +183,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        binding.actionBarLayout.removeOnOffsetChangedListener(this);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -200,6 +201,38 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         pictureZoomIn();
     }
 
+    private void pictureZoomIn() {
+        backgroundAnim(true, 300);
+    }
+
+    private void backgroundAnim(final boolean needShow, long duration) {
+        binding.viewBackground
+                .animate()
+                .alpha(needShow ? 1 : 0)
+                .setDuration(duration)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        if (needShow) {
+                            binding.vpImgs.setVisibility(View.VISIBLE);
+                            isFullScreen = true;
+                        } else {
+                            binding.actionBarLayout.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        if (needShow) {
+                            binding.actionBarLayout.setVisibility(View.GONE);
+                        }
+                    }
+                })
+                .start();
+    }
+
     @Override
     public void onBackPressed() {
         if (isFullScreen) {
@@ -216,7 +249,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void outOfFullScreen() {
         int currentItem = binding.vpImgs.getCurrentItem();
-        int screenWidth = getResources().getDisplayMetrics().heightPixels;
+//        int screenWidth = getResources().getDisplayMetrics().heightPixels;
+        DisplayMetrics display = getResources().getDisplayMetrics();
         View toView = mAdapter.getViews().get(currentItem);
 
         AnimatorListenerAdapter listener = new AnimatorListenerAdapter() {
@@ -229,17 +263,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         };
 
         ZoomInUtil.initZoomOutAnimation(currentItem, mAdapter.get(currentItem), binding.vpImgs,
-                toView, binding.clMain, screenWidth, listener);
+                toView, binding.clMain, display, listener);
 
-        binding.viewBackground.animate().alpha(0).setDuration(500).start();
-        binding.actionBarLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void pictureZoomIn() {
-        binding.viewBackground.setAlpha(1);
-        binding.vpImgs.setVisibility(View.VISIBLE);
-        binding.actionBarLayout.setVisibility(View.GONE);
-        isFullScreen = true;
+        backgroundAnim(false, 300);
     }
 
     @Override
@@ -251,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onPageSelected(int position) {
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
-        binding.actionBarLayout.setExpanded(position < 6, false);
+        binding.actionBarLayout.setExpanded(position < 2, false);
     }
 
     @Override

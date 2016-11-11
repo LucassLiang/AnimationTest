@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -88,7 +89,7 @@ public class ZoomInUtil {
     }
 
     public static void initZoomOutAnimation(int position, Image image, View fromView, View toView
-            , ViewGroup container, int screenWidth, AnimatorListenerAdapter listener) {
+            , ViewGroup container, DisplayMetrics display, AnimatorListenerAdapter listener) {
         Rect fromRect = new Rect();
         Point fromPoint = new Point();
         Rect toRect = new Rect();
@@ -102,15 +103,15 @@ public class ZoomInUtil {
         container.setPivotX(0);
         container.setPivotY(0);
 
-        float ratio = getZoomOutRatio(image, toRect, screenWidth);
+        float ratio = getZoomOutRatio(image, toRect, display);
         adjustPosition(toRect, fromRect, ratio, position);
 
         zoomOutAnimation(fromView, ratio, fromRect, toRect, listener);
     }
 
-    private static float getZoomOutRatio(Image image, Rect toRect, int screenWidth) {
+    private static float getZoomOutRatio(Image image, Rect toRect, DisplayMetrics display) {
         float ratio;
-        float scale = (float) screenWidth / image.getImageWidth();
+        float scale = (float) display.widthPixels / image.getImageWidth();
         if (image.getImageWidth() > image.getImageHeight()) {
             ratio = toRect.height() / (scale * image.getImageHeight());
             if (ratio * scale * image.getImageWidth() < toRect.width()) {
@@ -131,7 +132,7 @@ public class ZoomInUtil {
                 .with(ObjectAnimator.ofFloat(view, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_X, 1f, ratio))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_Y, 1f, ratio));
-        set.setDuration(500);
+        set.setDuration(300);
         set.addListener(listener);
         set.start();
     }

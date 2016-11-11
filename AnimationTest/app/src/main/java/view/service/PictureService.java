@@ -9,6 +9,6 @@ import view.dto.ImageDTO;
  */
 
 public interface PictureService {
-    @GET("data/imgs?col=摄影&tag=风景&sort=0&pn=1&rn=25&p=channel&from=1")
+    @GET("data/imgs?col=摄影&tag=风景&sort=0&pn=2&rn=25&p=channel&from=1")
     Observable<ImageDTO> getPicture();
 }
