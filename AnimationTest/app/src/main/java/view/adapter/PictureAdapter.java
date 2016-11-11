@@ -6,6 +6,8 @@ import android.view.View;
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ItemPictureBinding;
 
+import java.util.HashMap;
+
 import view.viewholder.BaseViewHolder;
 
 /**
@@ -16,6 +18,7 @@ public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBi
     private ItemPictureBinding binding;
     private View.OnClickListener mListener;
     private int clickPosition;
+    private HashMap<Integer, View> views = new HashMap<>();
 
     public PictureAdapter(Context mContext, View.OnClickListener mListener) {
         super(mContext);
@@ -32,6 +35,7 @@ public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBi
         super.onBindViewDataBinding(holder, position);
         binding = holder.getbinding();
         binding.setData(get(position));
+        views.put(position, binding.getRoot());
 
         binding.ivPicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +50,7 @@ public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBi
         return clickPosition;
     }
 
-    public ItemPictureBinding getBinding() {
-        return binding;
+    public HashMap<Integer, View> getViews() {
+        return views;
     }
 }
