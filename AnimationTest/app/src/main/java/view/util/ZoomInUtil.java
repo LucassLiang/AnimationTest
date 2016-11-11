@@ -18,7 +18,8 @@ import view.entity.Image;
 
 public class ZoomInUtil {
 
-    public static void initZoomInAnimation(int position, View fromView, View toView, ViewPager container) {
+    public static void initZoomInAnimation(int position, View fromView, View toView, ViewPager container,
+                                           Image currentImage, DisplayMetrics display) {
 
         Rect fromRect = new Rect();
         Point fromPoint = new Point();
@@ -31,7 +32,7 @@ public class ZoomInUtil {
         fromRect.offset(-toPoint.x, -toPoint.y);
         toRect.offset(-toPoint.x, -toPoint.y);
 
-        float ratio = getZoomInRatio(fromRect, toRect);
+        float ratio = getZoomInRatio(fromRect, toRect, currentImage, display);
         adjustPosition(fromRect, toRect, ratio, position);
 
         container.setPivotX(0);
@@ -40,12 +41,19 @@ public class ZoomInUtil {
         zoomInAnimation(container, ratio, fromRect, toRect);
     }
 
-    private static float getZoomInRatio(Rect fromRect, Rect toRect) {
+    private static float getZoomInRatio(Rect fromRect, Rect toRect, Image image, DisplayMetrics display) {
         float ratio;
-        if ((float) toRect.width() / toRect.height() > (float) fromRect.width() / fromRect.height()) {
-            ratio = (float) fromRect.height() / toRect.height();
+        float scale = (float) display.widthPixels / image.getImageWidth();
+        if (image.getImageWidth() > image.getImageHeight()) {
+            ratio = fromRect.height() / (image.getImageHeight() * scale);
+            if (image.getImageWidth() * ratio * scale < fromRect.width()) {
+                ratio = fromRect.width() / (image.getImageHeight() * scale);
+            }
         } else {
-            ratio = (float) fromRect.width() / toRect.width();
+            ratio = fromRect.width() / (image.getImageWidth() * scale);
+            if (image.getImageHeight() * ratio * scale < fromRect.height()) {
+                ratio = fromRect.height() / (image.getImageHeight() * scale);
+            }
         }
         return ratio;
     }
@@ -84,7 +92,7 @@ public class ZoomInUtil {
                 .with(ObjectAnimator.ofFloat(container, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_X, ratio, 1))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_Y, ratio, 1));
-        set.setDuration(500);
+        set.setDuration(3000);
         set.start();
     }
 
@@ -132,7 +140,7 @@ public class ZoomInUtil {
                 .with(ObjectAnimator.ofFloat(view, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_X, 1f, ratio))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_Y, 1f, ratio));
-        set.setDuration(300);
+        set.setDuration(3000);
         set.addListener(listener);
         set.start();
     }

@@ -197,12 +197,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onClick(final View v) {
         int position = mAdapter.getClickPosition();
         binding.vpImgs.setCurrentItem(position, false);
-        ZoomInUtil.initZoomInAnimation(position, v, binding.getRoot(), binding.vpImgs);
+        Image currentImage = mAdapter.get(position);
+        DisplayMetrics display = getResources().getDisplayMetrics();
+
+        ZoomInUtil.initZoomInAnimation(position, v, binding.clMain, binding.vpImgs, currentImage, display);
         pictureZoomIn();
     }
 
     private void pictureZoomIn() {
-        backgroundAnim(true, 300);
+        backgroundAnim(true, 3000);
     }
 
     private void backgroundAnim(final boolean needShow, long duration) {
@@ -249,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void outOfFullScreen() {
         int currentItem = binding.vpImgs.getCurrentItem();
-//        int screenWidth = getResources().getDisplayMetrics().heightPixels;
         DisplayMetrics display = getResources().getDisplayMetrics();
         View toView = mAdapter.getViews().get(currentItem);
 
@@ -265,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         ZoomInUtil.initZoomOutAnimation(currentItem, mAdapter.get(currentItem), binding.vpImgs,
                 toView, binding.clMain, display, listener);
 
-        backgroundAnim(false, 300);
+        backgroundAnim(false, 3000);
     }
 
     @Override
@@ -277,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onPageSelected(int position) {
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
-        binding.actionBarLayout.setExpanded(position < 2, false);
+//        binding.actionBarLayout.setExpanded(position < 6, false);
     }
 
     @Override
