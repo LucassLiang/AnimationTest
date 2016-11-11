@@ -200,12 +200,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         Image currentImage = mAdapter.get(position);
         DisplayMetrics display = getResources().getDisplayMetrics();
 
-        ZoomInUtil.initZoomInAnimation(position, v, binding.clMain, binding.vpImgs, currentImage, display);
+        ZoomInUtil.initZoomInAnimation(v, binding.clMain, binding.vpImgs, currentImage, display);
         pictureZoomIn();
     }
 
     private void pictureZoomIn() {
-        backgroundAnim(true, 3000);
+        backgroundAnim(true, 300);
     }
 
     private void backgroundAnim(final boolean needShow, long duration) {
@@ -264,10 +264,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         };
 
-        ZoomInUtil.initZoomOutAnimation(currentItem, mAdapter.get(currentItem), binding.vpImgs,
-                toView, binding.clMain, display, listener);
+        ZoomInUtil.initZoomOutAnimation(mAdapter.get(currentItem), binding.vpImgs, toView,
+                binding.clMain, display, listener);
 
-        backgroundAnim(false, 3000);
+        backgroundAnim(false, 300);
     }
 
     @Override
@@ -279,7 +279,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onPageSelected(int position) {
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
-//        binding.actionBarLayout.setExpanded(position < 6, false);
     }
 
     @Override

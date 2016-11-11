@@ -18,7 +18,7 @@ import view.entity.Image;
 
 public class ZoomInUtil {
 
-    public static void initZoomInAnimation(int position, View fromView, View toView, ViewPager container,
+    public static void initZoomInAnimation(View fromView, View toView, ViewPager container,
                                            Image currentImage, DisplayMetrics display) {
 
         Rect fromRect = new Rect();
@@ -32,8 +32,8 @@ public class ZoomInUtil {
         fromRect.offset(-toPoint.x, -toPoint.y);
         toRect.offset(-toPoint.x, -toPoint.y);
 
-        float ratio = getZoomInRatio(fromRect, toRect, currentImage, display);
-        adjustPosition(fromRect, toRect, ratio, position);
+        float ratio = getZoomInRatio(fromRect, currentImage, display);
+        adjustPosition(fromRect, toRect, ratio);
 
         container.setPivotX(0);
         container.setPivotY(0);
@@ -41,7 +41,7 @@ public class ZoomInUtil {
         zoomInAnimation(container, ratio, fromRect, toRect);
     }
 
-    private static float getZoomInRatio(Rect fromRect, Rect toRect, Image image, DisplayMetrics display) {
+    private static float getZoomInRatio(Rect fromRect, Image image, DisplayMetrics display) {
         float ratio;
         float scale = (float) display.widthPixels / image.getImageWidth();
         if (image.getImageWidth() > image.getImageHeight()) {
@@ -59,26 +59,24 @@ public class ZoomInUtil {
     }
 
     //调整动画位置
-    private static void adjustPosition(Rect fromRect, Rect toRect, float ratio, int position) {
+    private static void adjustPosition(Rect fromRect, Rect toRect, float ratio) {
         if ((float) toRect.width() / toRect.height() > (float) fromRect.width() / fromRect.height()) {
             float deltaWidth = getDeltaWidth(ratio, fromRect, toRect);
             fromRect.left -= deltaWidth;
             fromRect.right += deltaWidth;
             return;
         }
+        //adjust vertical position
         float fromHeight = (float) toRect.height() * ratio;
         float deltaHeight = (fromHeight - fromRect.height()) / 2;
         fromRect.top -= deltaHeight;
         fromRect.bottom += deltaHeight;
 
+        //adjust horizontal position
         float fromWidth = (float) toRect.width() * ratio;
         float deltaWidth = (fromWidth - fromRect.width()) / 2;
-        if ((position + 1) % 3 == 0) {
-            fromRect.left -= fromWidth - fromRect.width();
-        } else if ((position + 1) % 3 != 1) {
-            fromRect.left -= deltaWidth;
-            fromRect.right += deltaWidth;
-        }
+        fromRect.left -= deltaWidth;
+        fromRect.right += deltaWidth;
     }
 
     private static float getDeltaWidth(float ratio, Rect fromRect, Rect toRect) {
@@ -92,11 +90,11 @@ public class ZoomInUtil {
                 .with(ObjectAnimator.ofFloat(container, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_X, ratio, 1))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_Y, ratio, 1));
-        set.setDuration(3000);
+        set.setDuration(500);
         set.start();
     }
 
-    public static void initZoomOutAnimation(int position, Image image, View fromView, View toView
+    public static void initZoomOutAnimation(Image image, View fromView, View toView
             , ViewGroup container, DisplayMetrics display, AnimatorListenerAdapter listener) {
         Rect fromRect = new Rect();
         Point fromPoint = new Point();
@@ -112,7 +110,7 @@ public class ZoomInUtil {
         container.setPivotY(0);
 
         float ratio = getZoomOutRatio(image, toRect, display);
-        adjustPosition(toRect, fromRect, ratio, position);
+        adjustPosition(toRect, fromRect, ratio);
 
         zoomOutAnimation(fromView, ratio, fromRect, toRect, listener);
     }
@@ -140,7 +138,7 @@ public class ZoomInUtil {
                 .with(ObjectAnimator.ofFloat(view, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_X, 1f, ratio))
                 .with(ObjectAnimator.ofFloat(view, View.SCALE_Y, 1f, ratio));
-        set.setDuration(3000);
+        set.setDuration(500);
         set.addListener(listener);
         set.start();
     }
