@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +25,7 @@ import java.util.List;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import uk.co.senab.photoview.PhotoView;
 import view.adapter.ImagePagerAdapter;
 import view.adapter.PictureAdapter;
 import view.dto.ImageDTO;
@@ -36,9 +35,8 @@ import view.transformer.ImagePageTransformer;
 import view.util.AnimationUtil;
 import view.util.ZoomInUtil;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener
-        , Toolbar.OnMenuItemClickListener, AppBarLayout.OnOffsetChangedListener, View.OnClickListener
-        , ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener
+        , View.OnClickListener, ViewPager.OnPageChangeListener {
     public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
@@ -55,24 +53,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         getData();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        binding.actionBarLayout.addOnOffsetChangedListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        binding.actionBarLayout.removeOnOffsetChangedListener(this);
-    }
-
     private void initView() {
         initViewPager();
         initToolbar();
         initRecyclerView();
         binding.srlLayout.setEnabled(false);
-        binding.srlLayout.setOnRefreshListener(this);
     }
 
     private void initViewPager() {
@@ -114,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     @Override
                     public void onCompleted() {
                         binding.srlLayout.setRefreshing(false);
-                        binding.srlLayout.setEnabled(true);
                     }
 
                     @Override
@@ -135,19 +119,19 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 });
     }
 
-    @Override
-    public void onRefresh() {
-        (new Handler()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.clear();
-                vpAdapter.clear();
-                binding.vpImgs.removeAllViews();
-                vpAdapter.notifyDataSetChanged();
-                getData();
-            }
-        }, 200);
-    }
+//    @Override
+//    public void onRefresh() {
+//        (new Handler()).postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mAdapter.clear();
+//                vpAdapter.clear();
+//                binding.vpImgs.removeAllViews();
+//                vpAdapter.notifyDataSetChanged();
+//                getData();
+//            }
+//        }, 200);
+//    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -177,11 +161,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final int centerX = (next.getRight() + next.getLeft()) / 2;
         final int centerY = (next.getBottom() + next.getTop()) / 2;
         AnimationUtil.startActivityCircleReveal(this, container, targetView, centerX, centerY, endRadius);
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        binding.srlLayout.setEnabled(verticalOffset == 0);
     }
 
     @Override
@@ -254,6 +233,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void outOfFullScreen() {
         int currentItem = binding.vpImgs.getCurrentItem();
+        PhotoView current = getPhotoView(currentItem);
+        resetScale(current);
         DisplayMetrics display = getResources().getDisplayMetrics();
         View toView = mAdapter.getViews().get(currentItem);
 
@@ -279,6 +260,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onPageSelected(int position) {
+        final PhotoView left;
+        final PhotoView right;
+        left = position < 1 ? null : getPhotoView(position - 1);
+        right = position > vpAdapter.getCount() - 2 ? null : getPhotoView(position + 1);
+
+        resetScale(left);
+        resetScale(right);
+
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
         if (position > 6) {
@@ -289,5 +278,28 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    private PhotoView getPhotoView(int position) {
+        View currentView = binding.vpImgs.getChildAt(position);
+        if (currentView == null) {
+            return null;
+        }
+        PhotoView photoView = (PhotoView) currentView.findViewById(R.id.iv_picture);
+        return photoView;
+    }
+
+    private void resetScale(final PhotoView photoView) {
+        if (photoView != null) {
+            if (photoView.getScale() != photoView.getMinimumScale()) {
+                Log.i("TAG", "scale: " + photoView.getScale());
+                (new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        photoView.setScale(photoView.getMinimumScale(), false);
+                    }
+                }, 200);
+            }
+        }
     }
 }

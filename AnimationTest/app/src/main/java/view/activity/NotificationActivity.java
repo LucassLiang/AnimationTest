@@ -44,7 +44,6 @@ public class NotificationActivity extends AppCompatActivity {
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)
                     .setContentTitle("main")
-                    .setSmallIcon(R.drawable.shape_image)
                     .setContentText("back to main")
                     .build();
         }
