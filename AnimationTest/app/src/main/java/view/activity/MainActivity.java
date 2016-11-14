@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private void getData() {
         binding.srlLayout.setRefreshing(true);
-        ApiService.getPictureService().getPicture()
+        ApiService.getPictureService().getPicture("摄影", "风景", "0")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ImageDTO>() {
@@ -158,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             case R.id.action_change:
                 Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
                 startActivityForResult(intent, REQUEST_CODE);
+                break;
+            case R.id.action_search:
                 break;
         }
         return true;
@@ -279,6 +281,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onPageSelected(int position) {
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
+        if (position > 6) {
+            binding.actionBarLayout.setExpanded(false);
+        }
     }
 
     @Override
