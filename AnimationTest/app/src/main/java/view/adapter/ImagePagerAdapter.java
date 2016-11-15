@@ -55,6 +55,14 @@ public class ImagePagerAdapter extends PagerAdapter implements List<Image> {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        if (imgs != null && imgs.size() == 0) {
+            return POSITION_NONE;
+        }
+        return POSITION_UNCHANGED;
+    }
+
+    @Override
     public int size() {
         return imgs.size();
     }

@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import view.activity.NotificationActivity;
 
 public class AnimationUtil {
 
+    //startActivity with reveal animation
     public static void startActivityCircleReveal(final Activity context, final ViewGroup container, final View targetView
             , final int centerX, final int centerY, final float endRadius) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -60,5 +63,40 @@ public class AnimationUtil {
             });
             animation.start();
         }
+    }
+
+    //open search bar with reveal animation
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static void revealReturn(final View view,
+                                    final com.miguelcatalan.materialsearchview.utils.AnimationUtil.AnimationListener listener) {
+        int cx = view.getWidth() - (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                24, view.getResources().getDisplayMetrics());
+        int cy = view.getHeight() / 2;
+        int startRadius = Math.max(view.getWidth(), view.getHeight());
+        int finalRadius = 0;
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, startRadius, finalRadius);
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                listener.onAnimationStart(view);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                listener.onAnimationEnd(view);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                listener.onAnimationCancel(view);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        anim.start();
     }
 }

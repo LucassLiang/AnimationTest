@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.List;
 
@@ -37,29 +39,28 @@ import view.util.AnimationUtil;
 import view.util.ZoomInUtil;
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener
-        , View.OnClickListener, ViewPager.OnPageChangeListener {
+        , View.OnClickListener, ViewPager.OnPageChangeListener, com.miguelcatalan.materialsearchview.utils.AnimationUtil.AnimationListener {
     public static final int REQUEST_CODE = 1;
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
     private ImagePagerAdapter vpAdapter;
 
-    private PhotoView left;
-    private PhotoView right;
-
     private long lastTime = 0;
     private boolean isFullScreen = false;
+    private boolean isAnimating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initView();
-        getData();
+        getData("风景", false);
     }
 
     private void initView() {
         initViewPager();
         initToolbar();
+        initSearchBar();
         initRecyclerView();
         binding.srlLayout.setEnabled(false);
     }
@@ -78,9 +79,30 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private void initToolbar() {
-        binding.toolbarLayout.setTitle("Album");
         binding.toolbar.inflateMenu(R.menu.menu_item);
         binding.toolbar.setOnMenuItemClickListener(this);
+    }
+
+    private void initSearchBar() {
+        binding.svSearch.findViewById(R.id.action_up_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeSearchBar();
+            }
+        });
+
+        binding.svSearch.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                getData(query, true);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -94,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         binding.recyclerView.setHasFixedSize(true);
     }
 
-    private void getData() {
+    private void getData(String tag, final boolean needRefresh) {
         binding.srlLayout.setRefreshing(true);
-        ApiService.getPictureService().getPicture("摄影", "风景", "0")
+        ApiService.getPictureService().getPicture(tag)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ImageDTO>() {
@@ -112,6 +134,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
                     @Override
                     public void onNext(ImageDTO imageDTO) {
+                        if (needRefresh) {
+                            mAdapter.clear();
+                            mAdapter.notifyDataSetChanged();
+                            binding.vpImgs.removeAllViews();
+                            vpAdapter.clear();
+                            vpAdapter.notifyDataSetChanged();
+                        }
                         List<Image> images = imageDTO.getImgs();
                         for (int i = 0; i < images.size() - 1; i++) {
                             mAdapter.add(images.get(i));
@@ -122,20 +151,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                     }
                 });
     }
-
-//    @Override
-//    public void onRefresh() {
-//        (new Handler()).postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mAdapter.clear();
-//                vpAdapter.clear();
-//                binding.vpImgs.removeAllViews();
-//                vpAdapter.notifyDataSetChanged();
-//                getData();
-//            }
-//        }, 200);
-//    }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -148,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 startActivityForResult(intent, REQUEST_CODE);
                 break;
             case R.id.action_search:
+                if (!binding.svSearch.isSearchOpen()) {
+                    binding.svSearch.showSearch(true);
+                }
                 break;
         }
         return true;
@@ -180,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public void onClick(final View v) {
+        closeSearchBar();
+
         int position = mAdapter.getClickPosition();
         binding.vpImgs.setCurrentItem(position, false);
         Image currentImage = mAdapter.get(position);
@@ -223,6 +243,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public void onBackPressed() {
+        if (isAnimating) {
+            return;
+        }
+        if (binding.svSearch.isSearchOpen()) {
+            closeSearchBar();
+            return;
+        }
         if (isFullScreen) {
             outOfFullScreen();
         } else {
@@ -235,6 +262,14 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
     }
 
+    private void closeSearchBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AnimationUtil.revealReturn(binding.svSearch, this);
+        } else {
+            binding.svSearch.closeSearch();
+        }
+    }
+
     private void outOfFullScreen() {
         int currentItem = binding.vpImgs.getCurrentItem();
         PhotoView current = getPhotoView(currentItem);
@@ -244,10 +279,17 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         AnimatorListenerAdapter listener = new AnimatorListenerAdapter() {
             @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                isAnimating = true;
+            }
+
+            @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 binding.vpImgs.setVisibility(View.GONE);
                 isFullScreen = false;
+                isAnimating = false;
             }
         };
 
@@ -305,5 +347,21 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 }, 100);
             }
         }
+    }
+
+    @Override
+    public boolean onAnimationStart(View view) {
+        return false;
+    }
+
+    @Override
+    public boolean onAnimationEnd(View view) {
+        binding.svSearch.closeSearch();
+        return true;
+    }
+
+    @Override
+    public boolean onAnimationCancel(View view) {
+        return false;
     }
 }

@@ -10,6 +10,6 @@ import view.dto.ImageDTO;
  */
 
 public interface PictureService {
-    @GET("data/imgs?&sort=0&rn=25&p=channel&from=1")
-    Observable<ImageDTO> getPicture(@Query("col") String col, @Query("tag") String tag, @Query("pn") String pn);
+    @GET("data/imgs?col=壁纸&pn=1&sort=0&rn=25&p=channel&from=1")
+    Observable<ImageDTO> getPicture(@Query("tag") String tag);
 }
