@@ -26,6 +26,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 import view.adapter.ImagePagerAdapter;
 import view.adapter.PictureAdapter;
 import view.dto.ImageDTO;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private ActivityMainBinding binding;
     private PictureAdapter mAdapter;
     private ImagePagerAdapter vpAdapter;
+
+    private PhotoView left;
+    private PhotoView right;
 
     private long lastTime = 0;
     private boolean isFullScreen = false;
@@ -254,20 +258,21 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+    public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
+        getPhotoView(position).setOnScaleChangeListener(new PhotoViewAttacher.OnScaleChangeListener() {
+            @Override
+            public void onScaleChange(float scaleFactor, float focusX, float focusY) {
+                if (scaleFactor > getPhotoView(position).getMinimumScale()) {
+                    binding.vpImgs.setLockPage(true);
+                } else {
+                    binding.vpImgs.setLockPage(false);
+                }
+            }
+        });
     }
 
     @Override
     public void onPageSelected(int position) {
-        final PhotoView left;
-        final PhotoView right;
-        left = position < 1 ? null : getPhotoView(position - 1);
-        right = position > vpAdapter.getCount() - 2 ? null : getPhotoView(position + 1);
-
-        resetScale(left);
-        resetScale(right);
-
         GridLayoutManager manager = (GridLayoutManager) binding.recyclerView.getLayoutManager();
         manager.scrollToPosition(position);
         if (position > 6) {
@@ -281,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     private PhotoView getPhotoView(int position) {
-        View currentView = binding.vpImgs.getChildAt(position);
+        View currentView = binding.vpImgs.findViewWithTag("pic" + position);
         if (currentView == null) {
             return null;
         }
@@ -292,13 +297,12 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     private void resetScale(final PhotoView photoView) {
         if (photoView != null) {
             if (photoView.getScale() != photoView.getMinimumScale()) {
-                Log.i("TAG", "scale: " + photoView.getScale());
                 (new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        photoView.setScale(photoView.getMinimumScale(), false);
+                        photoView.setScale(photoView.getMinimumScale(), true);
                     }
-                }, 200);
+                }, 100);
             }
         }
     }

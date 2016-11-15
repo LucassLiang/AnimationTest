@@ -10,6 +10,8 @@ import android.view.MotionEvent;
  */
 
 public class ViewPagerFixed extends ViewPager {
+    private boolean lockPage = false;
+
     public ViewPagerFixed(Context context) {
         super(context);
     }
@@ -20,21 +22,33 @@ public class ViewPagerFixed extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        try {
-            return super.onTouchEvent(ev);
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+        if (!lockPage) {
+            try {
+                return super.onTouchEvent(ev);
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        try {
-            return super.onInterceptTouchEvent(ev);
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+        if (!lockPage) {
+            try {
+                return super.onInterceptTouchEvent(ev);
+            } catch (IllegalArgumentException ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
+    }
+
+    public boolean isLockPage() {
+        return lockPage;
+    }
+
+    public void setLockPage(boolean lockPage) {
+        this.lockPage = lockPage;
     }
 }

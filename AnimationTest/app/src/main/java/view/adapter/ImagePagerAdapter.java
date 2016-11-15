@@ -42,6 +42,7 @@ public class ImagePagerAdapter extends PagerAdapter implements List<Image> {
             LayoutInflater inflater = LayoutInflater.from(container.getContext());
             binding = DataBindingUtil.inflate(inflater, R.layout.item_view_pager, container, false);
             binding.setData(get(position));
+            binding.getRoot().setTag("pic" + position);
             container.addView(binding.getRoot());
             return binding.getRoot();
         }
