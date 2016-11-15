@@ -7,9 +7,9 @@
 
     <item
         android:id="@+id/action_change"
-        android:title="theme" />
+        android:title="night mode" />
 
     <item
         android:id="@+id/action_next"
-        android:title="next" />
+        android:title="notification" />
 </menu>

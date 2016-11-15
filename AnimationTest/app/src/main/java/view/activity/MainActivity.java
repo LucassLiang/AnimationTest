@@ -2,7 +2,6 @@ package view.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -159,8 +159,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 startAnimation();
                 break;
             case R.id.action_change:
-                Intent intent = new Intent(MainActivity.this, ThemeActivity.class);
-                startActivityForResult(intent, REQUEST_CODE);
+                changeNightMode(item);
                 break;
             case R.id.action_search:
                 if (!binding.svSearch.isSearchOpen()) {
@@ -185,15 +184,15 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         AnimationUtil.startActivityCircleReveal(this, container, targetView, centerX, centerY, endRadius);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE:
-                    recreate();
-                    break;
-            }
+    //change night mode
+    public void changeNightMode(MenuItem item) {
+        boolean isNight = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES);
+        if (isNight) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
+        recreate();
     }
 
     @Override
