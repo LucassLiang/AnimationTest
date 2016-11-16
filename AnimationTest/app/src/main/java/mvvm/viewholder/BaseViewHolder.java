@@ -1,4 +1,4 @@
-package view.viewholder;
+package mvvm.viewholder;
 
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;

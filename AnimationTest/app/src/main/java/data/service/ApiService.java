@@ -1,4 +1,4 @@
-package view.service;
+package data.service;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -10,8 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiService {
 
-    public static PictureService getPictureService() {
-        return getRetrofit().create(PictureService.class);
+    public static ImageService getPictureService() {
+        return getRetrofit().create(ImageService.class);
     }
 
     private  static Retrofit getRetrofit() {

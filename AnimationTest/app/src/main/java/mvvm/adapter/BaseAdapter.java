@@ -1,4 +1,4 @@
-package view.adapter;
+package mvvm.adapter;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
@@ -12,8 +12,8 @@ import android.widget.AdapterView;
 
 import java.util.List;
 
-import view.listener.ItemClickListener;
-import view.viewholder.BaseViewHolder;
+import mvvm.listener.ItemClickListener;
+import mvvm.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/7/16.

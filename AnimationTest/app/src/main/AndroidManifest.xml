@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/NightMode">
         <activity
-            android:name="view.activity.MainActivity"
+            android:name="mvvm.view.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
@@ -22,13 +22,9 @@
         </activity>
 
         <activity
-            android:name="view.activity.NotificationActivity"
+            android:name="mvvm.view.NotificationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-
-        <activity
-            android:name="view.activity.ThemeActivity"
-            android:screenOrientation="portrait" />
 
     </application>
 

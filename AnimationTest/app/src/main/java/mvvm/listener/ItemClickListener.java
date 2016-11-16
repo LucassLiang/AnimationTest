@@ -1,9 +1,9 @@
-package view.listener;
+package mvvm.listener;
 
 import android.view.View;
 
-import view.adapter.BaseAdapter;
-import view.viewholder.BaseViewHolder;
+import mvvm.adapter.BaseAdapter;
+import mvvm.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/7/16.

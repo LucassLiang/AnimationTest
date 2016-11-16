@@ -1,4 +1,4 @@
-package view.adapter;
+package mvvm.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -8,13 +8,13 @@ import com.example.lucas.animationtest.databinding.ItemPictureBinding;
 
 import java.util.HashMap;
 
-import view.viewholder.BaseViewHolder;
+import mvvm.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/2/16.
  */
 
-public class PictureAdapter extends ListAdapter<view.entity.Image, ItemPictureBinding> {
+public class PictureAdapter extends ListAdapter<mvvm.model.Image, ItemPictureBinding> {
     private ItemPictureBinding binding;
     private View.OnClickListener mListener;
     private int clickPosition;

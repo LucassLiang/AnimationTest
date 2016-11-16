@@ -1,4 +1,4 @@
-package view.util;
+package util;
 
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -10,7 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 
-import view.entity.Image;
+import mvvm.model.Image;
 
 /**
  * Created by lucas on 11/10/16.

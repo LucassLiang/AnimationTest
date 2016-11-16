@@ -1,4 +1,4 @@
-package view.util;
+package util;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
-import view.activity.NotificationActivity;
+import mvvm.view.NotificationActivity;
 
 /**
  * Created by lucas on 11/4/16.

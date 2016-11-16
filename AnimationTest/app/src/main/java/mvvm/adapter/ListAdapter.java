@@ -1,4 +1,4 @@
-package view.adapter;
+package mvvm.adapter;
 
 import android.content.Context;
 import android.databinding.ViewDataBinding;
@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import view.viewholder.BaseViewHolder;
+import mvvm.viewholder.BaseViewHolder;
 
 /**
  * Created by lucas on 11/7/16.

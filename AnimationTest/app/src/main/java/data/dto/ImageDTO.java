@@ -1,8 +1,8 @@
-package view.dto;
+package data.dto;
 
 import java.util.List;
 
-import view.entity.Image;
+import mvvm.model.Image;
 
 /**
  * Created by lucas on 11/4/16.

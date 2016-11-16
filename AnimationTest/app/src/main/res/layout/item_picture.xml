@@ -6,7 +6,7 @@
 
         <variable
             name="data"
-            type="view.entity.Image" />
+            type="mvvm.model.Image" />
 
     </data>
 

@@ -1,4 +1,4 @@
-package view.entity;
+package mvvm.model;
 
 import java.util.List;
 

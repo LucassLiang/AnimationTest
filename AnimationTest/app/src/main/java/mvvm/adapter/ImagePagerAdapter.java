@@ -1,4 +1,4 @@
-package view.adapter;
+package mvvm.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import view.entity.Image;
+import mvvm.model.Image;
 
 /**
  * Created by lucas on 11/8/16.

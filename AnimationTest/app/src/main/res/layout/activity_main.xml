@@ -4,6 +4,10 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="mvvm.viewmodel.MainViewModel"/>
+
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -77,12 +81,12 @@
             android:alpha="0"
             android:background="@color/black00" />
 
-        <view.widget.ViewPagerFixed
+        <widget.ViewPagerFixed
             android:id="@+id/vp_imgs"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </view.widget.ViewPagerFixed>
+        </widget.ViewPagerFixed>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
