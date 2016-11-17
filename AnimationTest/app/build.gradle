@@ -3,6 +3,13 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
     defaultConfig {
         applicationId "com.example.lucas.animationtest"
         minSdkVersion 15
@@ -39,5 +46,14 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.2'
     compile 'com.github.chrisbanes:PhotoView:1.3.1'
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
+
+    // LeanCloud 基础包
+    compile ('cn.leancloud.android:avoscloud-sdk:v3.+')
+
+    // 推送与实时聊天需要的包
+    compile ('cn.leancloud.android:avoscloud-push:v3.+@aar'){transitive = true}
+
+    //LeanCloud
+
     testCompile 'junit:junit:4.12'
 }

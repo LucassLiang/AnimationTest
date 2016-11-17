@@ -28,6 +28,8 @@ import mvvm.adapter.ImagePagerAdapter;
 import mvvm.adapter.PictureAdapter;
 import mvvm.model.Image;
 import mvvm.transformer.ImagePageTransformer;
+import mvvm.view.ChatActivity;
+import mvvm.view.NotificationActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -164,7 +166,7 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                startAnimation();
+                startAnimation(NotificationActivity.class, R.layout.activity_notification);
                 break;
             case R.id.action_change:
                 changeNightMode(item);
@@ -174,22 +176,25 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                     binding.svSearch.showSearch(true);
                 }
                 break;
+            case R.id.action_chat:
+                startAnimation(ChatActivity.class, R.layout.activity_chat);
+                break;
         }
         return true;
     }
 
-    private void startAnimation() {
+    private void startAnimation(Class<?> targetActivity, int layoutRes) {
         int height = context.getWindowManager().getDefaultDisplay().getHeight();
         int width = context.getWindowManager().getDefaultDisplay().getWidth();
         final int endRadius = (int) Math.sqrt(height * height + width * width);
 
         final ViewGroup container = binding.clMain;
-        final View targetView = context.getLayoutInflater().inflate(R.layout.activity_notification, container, false);
+        final View targetView = context.getLayoutInflater().inflate(layoutRes, container, false);
         container.addView(targetView, container.getWidth(), container.getHeight());
         View next = binding.toolbar.getChildAt(0);
         final int centerX = (next.getRight() + next.getLeft()) / 2;
         final int centerY = (next.getBottom() + next.getTop()) / 2;
-        AnimationUtil.startActivityCircleReveal(context, container, targetView, centerX, centerY, endRadius);
+        AnimationUtil.startActivityCircleReveal(context, targetActivity, container, targetView, centerX, centerY, endRadius);
     }
 
     //change night mode

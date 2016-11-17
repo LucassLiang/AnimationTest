@@ -12,4 +12,8 @@
     <item
         android:id="@+id/action_next"
         android:title="notification" />
+
+    <item
+        android:id="@+id/action_chat"
+        android:title="chat" />
 </menu>

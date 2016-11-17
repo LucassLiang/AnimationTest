@@ -1,7 +1,10 @@
 package mvvm.adapter;
 
 import android.databinding.BindingAdapter;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -19,5 +22,15 @@ public class BaseBindingAdapter {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .placeholder(R.drawable.shape_image)
                 .into(imageView);
+    }
+
+    @BindingAdapter("app:layout_gravity")
+    public static void setLayoutGravity(LinearLayout layout, boolean isAuthor) {
+        layout.setGravity(isAuthor ? Gravity.LEFT : Gravity.RIGHT);
+    }
+
+    @BindingAdapter("android:visibility")
+    public static void setVisibility(View view, boolean needShow) {
+        view.setVisibility(needShow ? View.VISIBLE : View.GONE);
     }
 }

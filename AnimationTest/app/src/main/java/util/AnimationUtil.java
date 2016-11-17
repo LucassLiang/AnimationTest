@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
-import mvvm.view.NotificationActivity;
-
 /**
  * Created by lucas on 11/4/16.
  */
@@ -20,8 +18,9 @@ import mvvm.view.NotificationActivity;
 public class AnimationUtil {
 
     //startActivity with reveal animation
-    public static void startActivityCircleReveal(final Activity context, final ViewGroup container, final View targetView
-            , final int centerX, final int centerY, final float endRadius) {
+    public static void startActivityCircleReveal(final Activity context, final Class<?> targetActivity,
+                                                 final ViewGroup container, final View targetView,
+                                                 final int centerX, final int centerY, final float endRadius) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Animator animation = ViewAnimationUtils.createCircularReveal(targetView,
                     centerX,
@@ -34,7 +33,7 @@ public class AnimationUtil {
                 public void onAnimationEnd(final Animator animation) {
                     super.onAnimationEnd(animation);
 
-                    Intent intent = new Intent(context, NotificationActivity.class);
+                    Intent intent = new Intent(context, targetActivity);
                     context.startActivity(intent);
                     context.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
