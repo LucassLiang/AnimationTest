@@ -1,10 +1,8 @@
 package mvvm.viewmodel;
 
 import android.app.Activity;
-import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
@@ -38,9 +36,6 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
     private ChatItemViewModel chatItemViewModel;
     private LinearLayoutManager layoutManager;
     private AVIMConversation conversation = null;
-
-    private long lastTimeStamp = 0;
-    private boolean isAuthor = true;
 
     public ChatViewModel(Activity context, ActivityChatBinding binding) {
         this.context = context;
@@ -99,7 +94,6 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                         @Override
                         public void done(AVIMClient avimClient, AVIMException e) {
                             if (handleExcept(e)) return;
-                            Log.i("TAG", "null: " + (conversation == null));
                             if (conversation == null) {
                                 createNewConversation(author, content, content);
                             } else {
@@ -122,7 +116,6 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                 chatAdapter.add(chatItemViewModel);
                 chatAdapter.notifyDataSetChanged();
                 layoutManager.scrollToPositionWithOffset(chatAdapter.size() - 1, 0);
-                lastTimeStamp = SystemClock.uptimeMillis();
             }
         });
     }

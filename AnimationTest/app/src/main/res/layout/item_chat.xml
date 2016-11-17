@@ -13,9 +13,6 @@
             name="showTime"
             type="Boolean" />
 
-        <variable
-            name="time"
-            type="String" />
     </data>
 
     <LinearLayout
@@ -30,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="@{time}"
+            android:text="@{viewModel.time}"
             android:textColor="@color/black00"
             android:textSize="15sp"
             android:visibility="@{showTime}" />

@@ -1,13 +1,9 @@
 package mvvm.adapter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ItemChatBinding;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import mvvm.viewholder.BaseViewHolder;
 import mvvm.viewmodel.ChatItemViewModel;
@@ -29,11 +25,6 @@ public class ChatAdapter extends ListAdapter<ChatItemViewModel, ItemChatBinding>
         super.onBindViewDataBinding(holder, position);
         binding = holder.getbinding();
         binding.setViewModel(get(position));
-        Log.i("TAG", "position: " + position);
-        long timestamp = get(position).getMessage().getTimestamp();
-        Date date = new Date(timestamp);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh-mm");
-        binding.tvTime.setText(format.format(date));
         binding.setShowTime(showTime(position));
     }
 
