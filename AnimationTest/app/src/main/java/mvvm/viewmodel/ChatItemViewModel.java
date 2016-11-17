@@ -24,7 +24,7 @@ public class ChatItemViewModel {
 
     public String getTime() {
         long timestamp = getMessage().getTimestamp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh-mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ssw");
         return format.format(timestamp);
     }
 

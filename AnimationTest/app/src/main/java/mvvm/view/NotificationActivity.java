@@ -21,6 +21,7 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Notification");
         binding = DataBindingUtil.setContentView(this, R.layout.activity_notification);
         viewModel = new NotificationViewModel(this);
         binding.setViewModel(viewModel);
@@ -29,6 +30,6 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        overridePendingTransition(0, 0);
     }
 }

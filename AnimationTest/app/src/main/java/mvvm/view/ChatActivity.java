@@ -21,9 +21,16 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Chat Chat");
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         viewModel = new ChatViewModel(this, binding);
         viewModel.onCreate();
         binding.setViewModel(viewModel);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
     }
 }
