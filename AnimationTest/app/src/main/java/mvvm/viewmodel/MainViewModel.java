@@ -28,7 +28,7 @@ import mvvm.adapter.ImagePagerAdapter;
 import mvvm.adapter.PictureAdapter;
 import mvvm.model.Image;
 import mvvm.transformer.ImagePageTransformer;
-import mvvm.view.ChatActivity;
+import mvvm.view.LoginActivity;
 import mvvm.view.NotificationActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -177,7 +177,7 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                 }
                 break;
             case R.id.action_chat:
-                startAnimation(ChatActivity.class, R.layout.activity_chat);
+                startAnimation(LoginActivity.class, R.layout.activity_login);
                 break;
         }
         return true;

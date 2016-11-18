@@ -10,13 +10,15 @@ import java.text.SimpleDateFormat;
 
 public class ChatItemViewModel {
     private AVIMMessage message;
+    private String fromId;
 
-    public ChatItemViewModel(AVIMMessage message) {
+    public ChatItemViewModel(AVIMMessage message, String fromId) {
         this.message = message;
+        this.fromId = fromId;
     }
 
     public boolean isAuthor() {
-        if (message.getFrom().equals("author")) {
+        if (message.getFrom().equals(fromId)) {
             return true;
         }
         return false;
