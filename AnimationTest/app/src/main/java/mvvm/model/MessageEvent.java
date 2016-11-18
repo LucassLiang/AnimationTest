@@ -1,26 +1,26 @@
 package mvvm.model;
 
 import com.avos.avoscloud.im.v2.AVIMConversation;
-import com.avos.avoscloud.im.v2.AVIMTypedMessage;
+import com.avos.avoscloud.im.v2.AVIMMessage;
 
 /**
  * Created by lucas on 18/11/2016.
  */
 
 public class MessageEvent {
-    private AVIMTypedMessage message;
+    private AVIMMessage message;
     private AVIMConversation conversation;
 
-    public MessageEvent(AVIMTypedMessage message, AVIMConversation conversation) {
+    public MessageEvent(AVIMMessage message, AVIMConversation conversation) {
         this.message = message;
         this.conversation = conversation;
     }
 
-    public AVIMTypedMessage getMessage() {
+    public AVIMMessage getMessage() {
         return message;
     }
 
-    public void setMessage(AVIMTypedMessage message) {
+    public void setMessage(AVIMMessage message) {
         this.message = message;
     }
 

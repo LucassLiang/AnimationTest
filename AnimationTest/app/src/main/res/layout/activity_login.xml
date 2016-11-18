@@ -38,6 +38,7 @@
             android:hint="poster Or receiver."
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:text="poster"
             android:textColor="@color/black"
             android:textSize="15sp" />
 

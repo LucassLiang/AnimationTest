@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.example.lucas.animationtest.databinding.ActivityLoginBinding;
 
 import constant.Constant;
+import mvvm.listener.AvImClientManager;
 import mvvm.view.ChatActivity;
 import util.StringUtil;
 
@@ -18,6 +22,7 @@ import util.StringUtil;
 public class LoginViewModel {
     private Context context;
     private ActivityLoginBinding binding;
+    private AvImClientManager manager = new AvImClientManager();
 
     public LoginViewModel(Context context, ActivityLoginBinding binding) {
         this.context = context;
@@ -25,7 +30,7 @@ public class LoginViewModel {
     }
 
     public void enterChat(View view) {
-        String id = binding.etId.getText().toString();
+        final String id = binding.etId.getText().toString();
         if (StringUtil.isEmpty(id)) {
             Snackbar.make(binding.getRoot(), "Id can not be empty!", Snackbar.LENGTH_SHORT).show();
             return;
@@ -34,8 +39,16 @@ public class LoginViewModel {
             Snackbar.make(binding.getRoot(), "Id can only be poster or receiver", Snackbar.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(Constant.ID, id);
-        context.startActivity(intent);
+
+        manager.getInstance().open(id, new AVIMClientCallback() {
+            @Override
+            public void done(AVIMClient avimClient, AVIMException e) {
+                if (null == e) {
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    intent.putExtra(Constant.ID, id);
+                    context.startActivity(intent);
+                }
+            }
+        });
     }
 }

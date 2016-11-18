@@ -10,7 +10,7 @@ import util.StringUtil;
  */
 
 public class AvImClientManager {
-    private AvImClientManager manager;
+    private static AvImClientManager manager;
     private AVIMClient client;
     private String clientId = "";
 
@@ -18,7 +18,7 @@ public class AvImClientManager {
 
     }
 
-    public synchronized AvImClientManager getInstance() {
+    public synchronized static AvImClientManager getInstance() {
         if (null == manager) {
             manager = new AvImClientManager();
         }

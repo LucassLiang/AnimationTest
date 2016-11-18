@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.im.v2.AVIMMessageManager;
-import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.example.lucas.animationtest.R;
 
 import mvvm.listener.MessageReceiver;
@@ -19,6 +18,7 @@ public class InitUtil extends Application {
         super.onCreate();
         AVOSCloud.initialize(this, getString(R.string.avos_app_id), getString(R.string.avos_app_key));
 
-        AVIMMessageManager.registerMessageHandler(AVIMTypedMessage.class, new MessageReceiver(this));
+//        AVIMMessageManager.registerMessageHandler(AVIMTypedMessage.class, new MessageReceiver(this));
+        AVIMMessageManager.registerDefaultMessageHandler(new MessageReceiver(this));
     }
 }

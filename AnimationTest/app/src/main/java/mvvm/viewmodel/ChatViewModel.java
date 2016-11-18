@@ -131,7 +131,7 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
         conversation.sendMessage(msg, new AVIMConversationCallback() {
             @Override
             public void done(AVIMException e) {
-//                if (handleExcept(e)) return;
+                if (handleExcept(e)) return;
                 chatItemViewModel = new ChatItemViewModel(msg, id);
                 chatAdapter.add(chatItemViewModel);
                 chatAdapter.notifyDataSetChanged();
