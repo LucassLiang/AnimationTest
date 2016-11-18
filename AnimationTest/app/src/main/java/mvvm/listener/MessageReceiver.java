@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMConversation;
@@ -35,8 +34,7 @@ public class MessageReceiver extends AVIMMessageHandler {
     public void onMessage(AVIMMessage message, AVIMConversation conversation, AVIMClient client) {
         super.onMessage(message, conversation, client);
         String clientId = "";
-        clientId = new AvImClientManager().getInstance().getClientId();
-        Log.i("TAG", "clientId: " + clientId);
+        clientId = AvImClientManager.getInstance().getClientId();
         if (client.getClientId().equals(clientId)) {
             if (!message.getFrom().equals(clientId)) {
                 MessageEvent event = new MessageEvent(message, conversation);

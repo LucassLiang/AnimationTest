@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
@@ -196,8 +195,8 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                 || event.getConversation().getConversationId().equals(conversation.getConversationId()))
             chatItemViewModel = new ChatItemViewModel(event.getMessage(), id);
         chatAdapter.add(chatItemViewModel);
-        Log.i("TAG", "receive: " + "success");
         chatAdapter.notifyDataSetChanged();
+        layoutManager.scrollToPositionWithOffset(chatAdapter.size() - 1, 0);
     }
 
     private boolean handleExcept(AVIMException e) {
