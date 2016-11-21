@@ -19,6 +19,7 @@ import java.util.Random;
 
 import constant.Constant;
 import mvvm.model.MessageEvent;
+import util.BaseApp;
 import util.Config;
 
 /**
@@ -41,7 +42,9 @@ public class MessageReceiver extends AVIMMessageHandler {
             if (!message.getFrom().equals(clientId)) {
                 MessageEvent event = new MessageEvent(message, conversation);
                 EventBus.getDefault().post(event);
-                sendNotification(message, conversation);
+                if (!BaseApp.getCurrentActivityName(context).equals("ChatActivity")) {
+                    sendNotification(message, conversation);
+                }
             }
         } else {
             client.close(null);
