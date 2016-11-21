@@ -35,10 +35,6 @@ public class LoginViewModel {
             Snackbar.make(binding.getRoot(), "Id can not be empty!", Snackbar.LENGTH_SHORT).show();
             return;
         }
-        if (!id.equals("poster") && !id.equals("receiver")) {
-            Snackbar.make(binding.getRoot(), "Id can only be poster or receiver", Snackbar.LENGTH_SHORT).show();
-            return;
-        }
 
         manager.getInstance().open(id, new AVIMClientCallback() {
             @Override
