@@ -13,6 +13,7 @@ import com.example.lucas.animationtest.databinding.ActivityLoginBinding;
 import constant.Constant;
 import mvvm.listener.AvImClientManager;
 import mvvm.view.ChatActivity;
+import util.Config;
 import util.StringUtil;
 
 /**
@@ -41,6 +42,7 @@ public class LoginViewModel {
             public void done(AVIMClient avimClient, AVIMException e) {
                 if (null == e) {
                     Intent intent = new Intent(context, ChatActivity.class);
+                    Config.putString(Constant.USER_ID, id);
                     intent.putExtra(Constant.ID, id);
                     context.startActivity(intent);
                 }

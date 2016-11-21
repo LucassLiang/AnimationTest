@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import constant.Constant;
 import mvvm.view.ChatActivity;
+import mvvm.view.LoginActivity;
 import util.StringUtil;
 
 /**
@@ -15,19 +16,27 @@ import util.StringUtil;
 public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (null != AvImClientManager.getInstance().getClient()) {
+        if (AvImClientManager.getInstance().getClient() != null) {
             String clientId = AvImClientManager.getInstance().getClientId();
             if (StringUtil.isEmpty(clientId)) {
                 return;
             }
-            goToSingleChatPage(context, intent);
+            goToChatGroup(context, intent);
+        } else {
+            goToLogin(context);
         }
     }
 
-    private void goToSingleChatPage(Context context, Intent intent) {
+    private void goToChatGroup(Context context, Intent intent) {
         Intent startActivityIntent = new Intent(context, ChatActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constant.MEMBER_ID, intent.getStringExtra(Constant.MEMBER_ID));
+        startActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivityIntent.putExtra(Constant.ID, intent.getStringExtra(Constant.MEMBER_ID));
         context.startActivity(startActivityIntent);
+    }
+
+    private void goToLogin(Context context) {
+        Intent loginIntent = new Intent(context, LoginActivity.class);
+        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(loginIntent);
     }
 }

@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:name="util.InitUtil"
+        android:name="util.BaseApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,6 +39,8 @@
             android:screenOrientation="portrait" />
 
         <service android:name="com.avos.avoscloud.PushService" />
+
+        <receiver android:name="mvvm.listener.NotificationReceiver" />
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

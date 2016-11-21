@@ -73,7 +73,9 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
             public void done(AVIMException e) {
                 if (null != e) {
                     getConversation();
+                    return;
                 }
+                getHistory(conversation, true);
             }
         });
     }
@@ -110,7 +112,7 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                 chatItemViewModel = new ChatItemViewModel(msg, userId);
                 chatAdapter.add(chatItemViewModel);
                 chatAdapter.notifyDataSetChanged();
-                layoutManager.scrollToPositionWithOffset(chatAdapter.size() - 1, 0);
+                showLastest();
             }
         });
     }
@@ -122,12 +124,12 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
                 if (handleExcept(e)) return;
-                getHistory(conversation);
+                getHistory(conversation, false);
             }
         });
     }
 
-    private void getHistory(AVIMConversation conversation) {
+    private void getHistory(AVIMConversation conversation, final boolean showLast) {
         conversation.queryMessages(new AVIMMessagesQueryCallback() {
             @Override
             public void done(List<AVIMMessage> list, AVIMException e) {
@@ -140,9 +142,16 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                 }
                 chatAdapter.addAll(0, viewModels);
                 chatAdapter.notifyDataSetChanged();
+                if (showLast) {
+                    showLastest();
+                }
                 binding.srlChatList.setRefreshing(false);
             }
         });
+    }
+
+    private void showLastest() {
+        layoutManager.scrollToPositionWithOffset(chatAdapter.size() - 1, 0);
     }
 
     @Subscribe
@@ -152,7 +161,7 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
             chatItemViewModel = new ChatItemViewModel(event.getMessage(), userId);
         chatAdapter.add(chatItemViewModel);
         chatAdapter.notifyDataSetChanged();
-        layoutManager.scrollToPositionWithOffset(chatAdapter.size() - 1, 0);
+        showLastest();
     }
 
     private boolean handleExcept(AVIMException e) {
