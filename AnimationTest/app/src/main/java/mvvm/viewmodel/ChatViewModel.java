@@ -3,6 +3,7 @@ package mvvm.viewmodel;
 import android.app.Activity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
@@ -38,7 +39,10 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
     private AVIMConversation conversation;
     private AVIMClient mClient;
 
+    private List<ChatItemViewModel> chats = new ArrayList<>();
+
     private String userId = "";
+    private AVIMMessage lastMessage;
 
     public ChatViewModel(Activity context, ActivityChatBinding binding) {
         this.context = context;
@@ -58,6 +62,7 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
     }
 
     private void initRecyclerView() {
+        binding.srlChatList.setEnabled(false);
         binding.srlChatList.setOnRefreshListener(this);
         layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         binding.rvChatList.setLayoutManager(layoutManager);
@@ -75,7 +80,28 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
                     getConversation();
                     return;
                 }
-                getHistory(conversation, true);
+                getHistory(conversation);
+            }
+        });
+    }
+
+    private void getHistory(AVIMConversation conversation) {
+        conversation.queryMessages(new AVIMMessagesQueryCallback() {
+            @Override
+            public void done(List<AVIMMessage> list, AVIMException e) {
+                if (handleExcept(e)) return;
+                chatAdapter.clear();
+                lastMessage = list.get(0);
+                List<ChatItemViewModel> viewModels = new ArrayList<>();
+                for (AVIMMessage msg : list) {
+                    chatItemViewModel = new ChatItemViewModel(msg, userId);
+                    viewModels.add(chatItemViewModel);
+                }
+                chatAdapter.addAll(0, viewModels);
+                chatAdapter.notifyDataSetChanged();
+                showLastest();
+                binding.srlChatList.setRefreshing(false);
+                binding.srlChatList.setEnabled(true);
             }
         });
     }
@@ -101,6 +127,7 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
         );
     }
 
+
     private void sendMsg(final String content) {
         final AVIMMessage msg = new AVIMMessage();
         msg.setContent(content);
@@ -117,35 +144,38 @@ public class ChatViewModel implements SwipeRefreshLayout.OnRefreshListener {
         });
     }
 
-
     @Override
     public void onRefresh() {
         mClient.open(new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
                 if (handleExcept(e)) return;
-                getHistory(conversation, false);
+                loadMoreHistory(20);
             }
         });
     }
 
-    private void getHistory(AVIMConversation conversation, final boolean showLast) {
-        conversation.queryMessages(new AVIMMessagesQueryCallback() {
+    private void loadMoreHistory(final int limit) {
+        conversation.queryMessages(lastMessage.getMessageId(), lastMessage.getTimestamp(), limit, new AVIMMessagesQueryCallback() {
             @Override
             public void done(List<AVIMMessage> list, AVIMException e) {
                 if (handleExcept(e)) return;
-                chatAdapter.clear();
-                List<ChatItemViewModel> viewModels = new ArrayList<ChatItemViewModel>();
-                for (AVIMMessage msg : list) {
-                    chatItemViewModel = new ChatItemViewModel(msg, userId);
-                    viewModels.add(chatItemViewModel);
+                chats.clear();
+
+                for (AVIMMessage message : list) {
+                    chatItemViewModel = new ChatItemViewModel(message, userId);
+                    chats.add(chatItemViewModel);
                 }
-                chatAdapter.addAll(0, viewModels);
+                chatAdapter.addAll(0, chats);
                 chatAdapter.notifyDataSetChanged();
-                if (showLast) {
-                    showLastest();
+
+                lastMessage = list.get(0);
+                if (list.size() < limit) {
+                    binding.srlChatList.setEnabled(false);
                 }
+
                 binding.srlChatList.setRefreshing(false);
+                layoutManager.scrollToPositionWithOffset(list.size(), 0);
             }
         });
     }

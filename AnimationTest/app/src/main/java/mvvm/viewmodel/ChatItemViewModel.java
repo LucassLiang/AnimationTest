@@ -26,8 +26,9 @@ public class ChatItemViewModel {
 
     public String getTime() {
         long timestamp = getMessage().getTimestamp();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        return format.format(timestamp);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+        String time = format.format(timestamp);
+        return time;
     }
 
     public AVIMMessage getMessage() {
