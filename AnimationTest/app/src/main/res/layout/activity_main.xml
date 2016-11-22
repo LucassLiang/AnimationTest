@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="mvvm.viewmodel.MainViewModel"/>
+            type="mvvm.viewmodel.MainViewModel" />
 
     </data>
 
@@ -78,8 +78,8 @@
             android:id="@+id/view_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/black00" />
+            android:background="@color/black00"
+            android:visibility="gone" />
 
         <widget.ViewPagerFixed
             android:id="@+id/vp_imgs"

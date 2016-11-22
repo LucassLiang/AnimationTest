@@ -24,6 +24,16 @@ public class BaseBindingAdapter {
                 .into(imageView);
     }
 
+    @BindingAdapter("app:thumbnail")
+    public static void setThumbnail(ImageView imageView, String uri) {
+        Glide.with(imageView.getContext())
+                .load(uri)
+                .thumbnail(0.1f)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.drawable.shape_image)
+                .into(imageView);
+    }
+
     @BindingAdapter("app:layout_gravity")
     public static void setLayoutGravity(LinearLayout layout, boolean isAuthor) {
         layout.setGravity(isAuthor ? Gravity.LEFT : Gravity.RIGHT);

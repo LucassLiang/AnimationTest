@@ -19,7 +19,7 @@ import mvvm.model.Image;
 public class ZoomInUtil {
 
     public static void initZoomInAnimation(View fromView, View toView, ViewPager container,
-                                           Image currentImage, DisplayMetrics display) {
+                                           Image currentImage, DisplayMetrics display, AnimatorListenerAdapter listener) {
 
         Rect fromRect = new Rect();
         Point fromPoint = new Point();
@@ -38,7 +38,7 @@ public class ZoomInUtil {
         container.setPivotX(0);
         container.setPivotY(0);
 
-        zoomInAnimation(container, ratio, fromRect, toRect);
+        zoomInAnimation(container, ratio, fromRect, toRect, listener);
     }
 
     private static float getZoomInRatio(Rect fromRect, Image image, DisplayMetrics display) {
@@ -84,13 +84,15 @@ public class ZoomInUtil {
         return (fromWidth - fromRect.width()) / 2;
     }
 
-    private static void zoomInAnimation(ViewPager container, float ratio, Rect fromRect, Rect toRect) {
+    private static void zoomInAnimation(ViewPager container, float ratio, Rect fromRect, Rect toRect,
+                                        AnimatorListenerAdapter listener) {
         AnimatorSet set = new AnimatorSet();
         set.play(ObjectAnimator.ofFloat(container, View.X, fromRect.left, toRect.left))
                 .with(ObjectAnimator.ofFloat(container, View.Y, fromRect.top, toRect.top))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_X, ratio, 1))
                 .with(ObjectAnimator.ofFloat(container, View.SCALE_Y, ratio, 1));
         set.setDuration(500);
+        set.addListener(listener);
         set.start();
     }
 

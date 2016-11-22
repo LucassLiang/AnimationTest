@@ -217,40 +217,18 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
         Image currentImage = mAdapter.get(position);
         DisplayMetrics display = context.getResources().getDisplayMetrics();
 
-        ZoomInUtil.initZoomInAnimation(v, binding.clMain, binding.vpImgs, currentImage, display);
-        pictureZoomIn();
-    }
+        AnimatorListenerAdapter listener = new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                binding.viewBackground.setVisibility(View.VISIBLE);
+                binding.actionBarLayout.setVisibility(View.GONE);
+                binding.vpImgs.setVisibility(View.VISIBLE);
+                isFullScreen = true;
+            }
+        };
 
-    private void pictureZoomIn() {
-        backgroundAnim(true, 300);
-    }
-
-    private void backgroundAnim(final boolean needShow, long duration) {
-        binding.viewBackground
-                .animate()
-                .alpha(needShow ? 1 : 0)
-                .setDuration(duration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        if (needShow) {
-                            binding.vpImgs.setVisibility(View.VISIBLE);
-                            isFullScreen = true;
-                        } else {
-                            binding.actionBarLayout.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        if (needShow) {
-                            binding.actionBarLayout.setVisibility(View.GONE);
-                        }
-                    }
-                })
-                .start();
+        ZoomInUtil.initZoomInAnimation(v, binding.clMain, binding.vpImgs, currentImage, display, listener);
     }
 
     private void closeSearchBar() {
@@ -272,6 +250,8 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+                binding.actionBarLayout.setVisibility(View.VISIBLE);
+                binding.viewBackground.setVisibility(View.GONE);
                 isAnimating = true;
             }
 
@@ -287,7 +267,6 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
         ZoomInUtil.initZoomOutAnimation(mAdapter.get(currentItem), binding.vpImgs, toView,
                 binding.clMain, display, listener);
 
-        backgroundAnim(false, 300);
     }
 
     private PhotoView getPhotoView(int position) {
