@@ -6,24 +6,24 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.lucas.animationtest.R;
-import com.example.lucas.animationtest.databinding.ActivityNotificationBinding;
+import com.example.lucas.animationtest.databinding.ActivityCustomBinding;
 
-import mvvm.viewmodel.NotificationViewModel;
+import mvvm.viewmodel.CustomViewModel;
 
 /**
  * Created by lucas on 10/31/16.
  */
 
-public class NotificationActivity extends AppCompatActivity {
-    private ActivityNotificationBinding binding;
-    private NotificationViewModel viewModel;
+public class CustomActivity extends AppCompatActivity {
+    private ActivityCustomBinding binding;
+    private CustomViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Notification");
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_notification);
-        viewModel = new NotificationViewModel(this);
+        setTitle("Custom View");
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_custom);
+        viewModel = new CustomViewModel(this, binding);
         binding.setViewModel(viewModel);
     }
 

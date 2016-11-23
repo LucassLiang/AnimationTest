@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/action_next"
-        android:title="notification" />
+        android:title="custom view" />
 
     <item
         android:id="@+id/action_chat"

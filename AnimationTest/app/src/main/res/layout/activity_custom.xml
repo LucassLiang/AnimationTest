@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="mvvm.viewmodel.NotificationViewModel" />
+            type="mvvm.viewmodel.CustomViewModel" />
 
     </data>
 
@@ -19,11 +19,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="250dp"
-            android:onClick="@{viewModel.pushMessage}"
-            android:text="Push Message" />
+            android:layout_margin="20dp"
+            android:onClick="@{viewModel.startAnimation}"
+            android:text="start" />
+
+        <widget.CustomView
+            android:id="@+id/view_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 </layout>

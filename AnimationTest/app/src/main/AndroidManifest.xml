@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name="mvvm.view.NotificationActivity"
+            android:name="mvvm.view.CustomActivity"
             android:screenOrientation="portrait" />
 
         <activity

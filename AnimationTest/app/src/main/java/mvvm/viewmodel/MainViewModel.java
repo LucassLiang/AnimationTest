@@ -29,7 +29,7 @@ import mvvm.adapter.PictureAdapter;
 import mvvm.model.Image;
 import mvvm.transformer.ImagePageTransformer;
 import mvvm.view.LoginActivity;
-import mvvm.view.NotificationActivity;
+import mvvm.view.CustomActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -166,7 +166,7 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_next:
-                startAnimation(NotificationActivity.class, R.layout.activity_notification);
+                startAnimation(CustomActivity.class, R.layout.activity_custom);
                 break;
             case R.id.action_change:
                 changeNightMode(item);
@@ -251,13 +251,13 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
                 binding.actionBarLayout.setVisibility(View.VISIBLE);
-                binding.viewBackground.setVisibility(View.GONE);
                 isAnimating = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
+                binding.viewBackground.setVisibility(View.GONE);
                 binding.vpImgs.setVisibility(View.GONE);
                 isFullScreen = false;
                 isAnimating = false;
