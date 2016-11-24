@@ -7,9 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.Transformation;
 
 /**
@@ -62,14 +64,15 @@ public class CustomView extends View {
         super.onLayout(changed, left, top, right, bottom);
         centerX = getWidth() / 2;
         centerY = getHeight() / 2;
-        distanceMax = getWidth() - 2 * radius;
+        distanceMax = getHeight() - 2 * radius;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPath.reset();
-        canvas.translate(radius, getHeight() / 2);
+        canvas.translate(getWidth() / 2, radius);
+        canvas.scale(1, -1);
 
         mPaint.setColor(Color.BLUE);
         mPaint.setStrokeWidth(1);
@@ -88,10 +91,11 @@ public class CustomView extends View {
         //translate
         float offset = distanceMax * (currentTime - 0.2f);
         offset = offset > 0 ? offset : 0;
-        pointTop.adjustAllX(offset);
-        pointBottom.adjustAllX(offset);
-        pointLeft.transAllX(offset);
-        pointRight.transAllX(offset);
+        pointTop.transAllY(offset);
+        pointBottom.transAllY(offset);
+        pointLeft.transAllY(-offset);
+        pointRight.transAllY(-offset);
+
 
         mPath.moveTo(pointTop.x, pointTop.y);
         mPath.cubicTo(pointTop.right.x, pointTop.right.y, pointRight.top.x, pointRight.top.y, pointRight.x, pointRight.y);
@@ -118,39 +122,40 @@ public class CustomView extends View {
 
     private void model1(float time) {
         model0();
-        pointRight.setX(radius + time * 5 * radius);
+        pointBottom.setY(-radius - time * 5 * radius);
+        Log.i("TAG", "pointTop: " + pointTop.x + "/" + pointTop.y);
     }
 
     private void model2(float time) {
         model1(0.2f);
         time = (time - 0.2f) * (10f / 3);
-        pointTop.adjustAllX(radius / 2 * time);
-        pointBottom.adjustAllX(radius / 2 * time);
-        pointLeft.adjustY(cDistance * time);
-        pointRight.adjustY(cDistance * time);
+        pointTop.adjustX(cDistance * time);
+        pointBottom.adjustX(cDistance * time);
+        pointLeft.transAllY(-radius / 2 * time);
+        pointRight.transAllY(-radius / 2 * time);
     }
 
     private void model3(float time) {
         model2(0.5f);
         time = (time - 0.5f) * (10f / 3);
-        pointTop.adjustAllX(radius / 2 * time);
-        pointBottom.adjustAllX(radius / 2 * time);
-        pointLeft.adjustY(-cDistance * time);
-        pointRight.adjustY(-cDistance * time);
+        pointTop.adjustX(-cDistance * time);
+        pointBottom.adjustX(-cDistance * time);
+        pointLeft.transAllY(-radius / 2 * time);
+        pointRight.transAllY(-radius / 2 * time);
 
-        pointLeft.transAllX(radius / 2 * time);
+        pointTop.transAllY(radius / 2 * time);
     }
 
     private void model4(float time) {
         model3(0.8f);
         time = (time - 0.8f) * 10;
-        pointLeft.transAllX(radius / 2 * time);
+        pointTop.transAllY(radius / 2 * time);
     }
 
     private void model5(float time) {
         model4(0.9f);
         time = time - 0.9f;
-        pointLeft.transAllX((float) (Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
+        pointTop.transAllY((float) (Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
     }
 
     class VPoint {
@@ -175,6 +180,12 @@ public class CustomView extends View {
             top.x += offset;
             bottom.x += offset;
         }
+
+        public void transAllY(float offset) {
+            this.y += offset;
+            top.y += offset;
+            bottom.y += offset;
+        }
     }
 
     class HPoint {
@@ -189,11 +200,32 @@ public class CustomView extends View {
             right.y = y;
         }
 
-        public void adjustAllX(float offset) {
+        public void adjustX(float offset) {
+            left.x += offset;
+            right.x -= offset;
+        }
+
+        public void transAllY(float offset) {
+            this.y -= offset;
+            left.y -= offset;
+            right.y -= offset;
+        }
+
+        public void transAllX(float offset) {
             this.x += offset;
             left.x += offset;
             right.x += offset;
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                event.getX();
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     public class MoveAnimation extends Animation {
@@ -210,7 +242,7 @@ public class CustomView extends View {
         currentTime = 0;
         MoveAnimation animation = new MoveAnimation();
         animation.setDuration(duration);
-        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.setInterpolator(new BounceInterpolator());
         animation.setRepeatMode(Animation.REVERSE);
         animation.setRepeatCount(Animation.INFINITE);
         startAnimation(animation);
