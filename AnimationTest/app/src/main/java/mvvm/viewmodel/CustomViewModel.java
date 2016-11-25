@@ -19,7 +19,7 @@ public class CustomViewModel {
     }
 
     public void startAnimation(View view) {
-        binding.viewCustom.startAnimation(1000);
+//        binding.viewCustom.startAnimation(1000);
         if (binding.viewLoading.isOver()) {
             binding.viewLoading.startAnimator();
         } else {

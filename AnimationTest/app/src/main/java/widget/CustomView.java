@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,6 +31,15 @@ public class CustomView extends View {
     private float distanceMax;
 
     private float currentTime;
+
+    public enum DIRECTION {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+
+    private DIRECTION direction = DIRECTION.DOWN;
 
     public CustomView(Context context) {
         super(context);
@@ -64,20 +72,20 @@ public class CustomView extends View {
         super.onLayout(changed, left, top, right, bottom);
         centerX = getWidth() / 2;
         centerY = getHeight() / 2;
-        distanceMax = getHeight() - 2 * radius;
+        distanceMax = getHeight() / 2 - 2 * radius;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPath.reset();
-        canvas.translate(getWidth() / 2, radius);
+        canvas.translate(getWidth() / 2, getHeight() / 2);
         canvas.scale(1, -1);
 
         mPaint.setColor(Color.BLUE);
         mPaint.setStrokeWidth(1);
         if (0 <= currentTime && currentTime <= 0.2) {
-            model1(currentTime);
+            model1(currentTime, direction);
         } else if (0.2 < currentTime && currentTime <= 0.5) {
             model2(currentTime);
         } else if (0.5 < currentTime && currentTime <= 0.8) {
@@ -91,11 +99,20 @@ public class CustomView extends View {
         //translate
         float offset = distanceMax * (currentTime - 0.2f);
         offset = offset > 0 ? offset : 0;
-        pointTop.transAllY(offset);
-        pointBottom.transAllY(offset);
-        pointLeft.transAllY(-offset);
-        pointRight.transAllY(-offset);
-
+        switch (direction) {
+            case UP:
+                pointTop.transAllY(-offset);
+                pointBottom.transAllY(-offset);
+                pointLeft.transAllY(offset);
+                pointRight.transAllY(offset);
+                break;
+            case DOWN:
+                pointTop.transAllY(offset);
+                pointBottom.transAllY(offset);
+                pointLeft.transAllY(-offset);
+                pointRight.transAllY(-offset);
+                break;
+        }
 
         mPath.moveTo(pointTop.x, pointTop.y);
         mPath.cubicTo(pointTop.right.x, pointTop.right.y, pointRight.top.x, pointRight.top.y, pointRight.x, pointRight.y);
@@ -120,17 +137,57 @@ public class CustomView extends View {
         pointLeft.y = pointRight.y = 0;
     }
 
-    private void model1(float time) {
+    private void model1(float time, DIRECTION direction) {
         model0();
+        switch (direction) {
+            case LEFT:
+                break;
+            case RIGHT:
+                break;
+            case UP:
+                moveUp1(time);
+                break;
+            case DOWN:
+                moveDown1(time);
+                break;
+        }
+    }
+
+    private void moveUp1(float time) {
+        pointTop.setY(radius + time * 5 * radius);
+    }
+
+    private void moveDown1(float time) {
         pointBottom.setY(-radius - time * 5 * radius);
-        Log.i("TAG", "pointTop: " + pointTop.x + "/" + pointTop.y);
     }
 
     private void model2(float time) {
-        model1(0.2f);
+        model1(0.2f, direction);
         time = (time - 0.2f) * (10f / 3);
-        pointTop.adjustX(cDistance * time);
-        pointBottom.adjustX(cDistance * time);
+        switch (direction) {
+            case LEFT:
+                break;
+            case RIGHT:
+                break;
+            case UP:
+                moveUp2(time);
+                break;
+            case DOWN:
+                moveDown2(time);
+                break;
+        }
+    }
+
+    private void moveUp2(float time) {
+        pointTop.adjustX(-cDistance * time);
+        pointBottom.adjustX(-cDistance * time);
+        pointLeft.transAllY(radius / 2 * time);
+        pointRight.transAllY(radius / 2 * time);
+    }
+
+    private void moveDown2(float time) {
+        pointTop.adjustX(-cDistance * time);
+        pointBottom.adjustX(-cDistance * time);
         pointLeft.transAllY(-radius / 2 * time);
         pointRight.transAllY(-radius / 2 * time);
     }
@@ -138,8 +195,32 @@ public class CustomView extends View {
     private void model3(float time) {
         model2(0.5f);
         time = (time - 0.5f) * (10f / 3);
-        pointTop.adjustX(-cDistance * time);
-        pointBottom.adjustX(-cDistance * time);
+        switch (direction) {
+            case LEFT:
+                break;
+            case RIGHT:
+                break;
+            case UP:
+                moveUp3(time);
+                break;
+            case DOWN:
+                moveDown3(time);
+                break;
+        }
+    }
+
+    private void moveUp3(float time) {
+        pointTop.adjustX(cDistance * time);
+        pointBottom.adjustX(cDistance * time);
+        pointLeft.transAllY(radius / 2 * time);
+        pointRight.transAllY(radius / 2 * time);
+
+        pointBottom.transAllY(-radius / 2 * time);
+    }
+
+    private void moveDown3(float time) {
+        pointTop.adjustX(cDistance * time);
+        pointBottom.adjustX(cDistance * time);
         pointLeft.transAllY(-radius / 2 * time);
         pointRight.transAllY(-radius / 2 * time);
 
@@ -149,13 +230,51 @@ public class CustomView extends View {
     private void model4(float time) {
         model3(0.8f);
         time = (time - 0.8f) * 10;
+        switch (direction) {
+            case LEFT:
+                break;
+            case RIGHT:
+                break;
+            case UP:
+                moveUp4(time);
+                break;
+            case DOWN:
+                moveDown4(time);
+                break;
+        }
+    }
+
+    private void moveUp4(float time) {
+        pointBottom.transAllY(-radius / 2 * time);
+    }
+
+    private void moveDown4(float time) {
         pointTop.transAllY(radius / 2 * time);
     }
 
     private void model5(float time) {
         model4(0.9f);
         time = time - 0.9f;
-        pointTop.transAllY((float) (Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
+        switch (direction) {
+            case LEFT:
+                break;
+            case RIGHT:
+                break;
+            case UP:
+                moveUp5(time);
+                break;
+            case DOWN:
+                moveDown5(time);
+                break;
+        }
+    }
+
+    private void moveUp5(float time) {
+        pointBottom.transAllY((float) (Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
+    }
+
+    private void moveDown5(float time) {
+        pointTop.transAllY((float) (-Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
     }
 
     class VPoint {
@@ -222,7 +341,13 @@ public class CustomView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                event.getX();
+                if (event.getY() > centerY) {
+                    direction = DIRECTION.DOWN;
+                    startAnimation(1000);
+                } else if (event.getY() < centerY) {
+                    direction = DIRECTION.UP;
+                    startAnimation(1000);
+                }
                 break;
         }
         return super.onTouchEvent(event);
