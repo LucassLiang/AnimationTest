@@ -100,6 +100,18 @@ public class CustomView extends View {
         float offset = distanceMax * (currentTime - 0.2f);
         offset = offset > 0 ? offset : 0;
         switch (direction) {
+            case LEFT:
+                pointTop.transAllX(-offset);
+                pointBottom.transAllX(-offset);
+                pointLeft.transAllX(-offset);
+                pointRight.transAllX(-offset);
+                break;
+            case RIGHT:
+                pointTop.transAllX(offset);
+                pointBottom.transAllX(offset);
+                pointLeft.transAllX(offset);
+                pointRight.transAllX(offset);
+                break;
             case UP:
                 pointTop.transAllY(-offset);
                 pointBottom.transAllY(-offset);
@@ -141,8 +153,10 @@ public class CustomView extends View {
         model0();
         switch (direction) {
             case LEFT:
+                moveLeft1(time);
                 break;
             case RIGHT:
+                moveRight1(time);
                 break;
             case UP:
                 moveUp1(time);
@@ -151,6 +165,14 @@ public class CustomView extends View {
                 moveDown1(time);
                 break;
         }
+    }
+
+    private void moveLeft1(float time) {
+        pointLeft.setX(-radius - time * 5 * radius);
+    }
+
+    private void moveRight1(float time) {
+        pointRight.setX(radius + time * 5 * radius);
     }
 
     private void moveUp1(float time) {
@@ -166,8 +188,10 @@ public class CustomView extends View {
         time = (time - 0.2f) * (10f / 3);
         switch (direction) {
             case LEFT:
+                moveLeft2(time);
                 break;
             case RIGHT:
+                moveRight2(time);
                 break;
             case UP:
                 moveUp2(time);
@@ -176,6 +200,20 @@ public class CustomView extends View {
                 moveDown2(time);
                 break;
         }
+    }
+
+    private void moveLeft2(float time) {
+        pointLeft.adjustY(-cDistance * time);
+        pointRight.adjustY(-cDistance * time);
+        pointTop.transAllX(-radius / 2 * time);
+        pointBottom.transAllX(-radius / 2 * time);
+    }
+
+    private void moveRight2(float time) {
+        pointLeft.adjustY(-cDistance * time);
+        pointRight.adjustY(-cDistance * time);
+        pointTop.transAllX(radius / 2 * time);
+        pointBottom.transAllX(radius / 2 * time);
     }
 
     private void moveUp2(float time) {
@@ -197,8 +235,10 @@ public class CustomView extends View {
         time = (time - 0.5f) * (10f / 3);
         switch (direction) {
             case LEFT:
+                moveLeft3(time);
                 break;
             case RIGHT:
+                moveRight3(time);
                 break;
             case UP:
                 moveUp3(time);
@@ -207,6 +247,24 @@ public class CustomView extends View {
                 moveDown3(time);
                 break;
         }
+    }
+
+    private void moveLeft3(float time) {
+        pointLeft.adjustY(cDistance * time);
+        pointRight.adjustY(cDistance * time);
+        pointTop.transAllX(-radius / 2 * time);
+        pointBottom.transAllX(-radius / 2 * time);
+
+        pointRight.transAllX(-radius / 2 * time);
+    }
+
+    private void moveRight3(float time) {
+        pointLeft.adjustY(cDistance * time);
+        pointRight.adjustY(cDistance * time);
+        pointTop.transAllX(radius / 2 * time);
+        pointBottom.transAllX(radius / 2 * time);
+
+        pointLeft.transAllX(radius / 2 * time);
     }
 
     private void moveUp3(float time) {
@@ -232,8 +290,10 @@ public class CustomView extends View {
         time = (time - 0.8f) * 10;
         switch (direction) {
             case LEFT:
+                moveLeft4(time);
                 break;
             case RIGHT:
+                moveRight4(time);
                 break;
             case UP:
                 moveUp4(time);
@@ -242,6 +302,14 @@ public class CustomView extends View {
                 moveDown4(time);
                 break;
         }
+    }
+
+    private void moveLeft4(float time) {
+        pointRight.transAllX(-radius / 2 * time);
+    }
+
+    private void moveRight4(float time) {
+        pointLeft.transAllX(radius / 2 * time);
     }
 
     private void moveUp4(float time) {
@@ -257,8 +325,10 @@ public class CustomView extends View {
         time = time - 0.9f;
         switch (direction) {
             case LEFT:
+                moveLeft5(time);
                 break;
             case RIGHT:
+                moveRight5(time);
                 break;
             case UP:
                 moveUp5(time);
@@ -267,6 +337,14 @@ public class CustomView extends View {
                 moveDown5(time);
                 break;
         }
+    }
+
+    private void moveLeft5(float time) {
+        pointRight.transAllX((float) (Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
+    }
+
+    private void moveRight5(float time) {
+        pointLeft.transAllX((float) (-Math.sin(Math.PI * time * 10f) * (2 / 10f * radius)));
     }
 
     private void moveUp5(float time) {
@@ -319,6 +397,11 @@ public class CustomView extends View {
             right.y = y;
         }
 
+        public void adjustY(float offset) {
+            left.y += offset;
+            right.y -= offset;
+        }
+
         public void adjustX(float offset) {
             left.x += offset;
             right.x -= offset;
@@ -341,13 +424,23 @@ public class CustomView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (event.getY() > centerY) {
-                    direction = DIRECTION.DOWN;
-                    startAnimation(1000);
-                } else if (event.getY() < centerY) {
-                    direction = DIRECTION.UP;
-                    startAnimation(1000);
+                if (Math.abs(event.getX() - centerX) > Math.abs(event.getY() - centerY)) {
+                    if (event.getX() < centerX) {
+                        direction = DIRECTION.LEFT;
+                    } else if (event.getX() > centerX) {
+                        direction = DIRECTION.RIGHT;
+                    }
+                } else {
+                    if (event.getY() > centerY) {
+                        direction = DIRECTION.DOWN;
+                        startAnimation(1000);
+                    } else if (event.getY() < centerY) {
+                        direction = DIRECTION.UP;
+                        startAnimation(1000);
+                    }
                 }
+
+                startAnimation(1000);
                 break;
         }
         return super.onTouchEvent(event);
