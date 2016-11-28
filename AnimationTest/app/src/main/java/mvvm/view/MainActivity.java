@@ -10,13 +10,12 @@ import com.example.lucas.animationtest.databinding.ActivityMainBinding;
 import mvvm.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
     private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         viewModel = new MainViewModel(this, binding);
         binding.setViewModel(viewModel);
         viewModel.onCreate();

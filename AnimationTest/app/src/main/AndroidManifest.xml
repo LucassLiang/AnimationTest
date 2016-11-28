@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
     <application
         android:name="util.BaseApp"
         android:allowBackup="true"
@@ -37,6 +40,11 @@
         <activity
             android:name="mvvm.view.LoginActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name="mvvm.view.BlueToothActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
         <service android:name="com.avos.avoscloud.PushService" />
 

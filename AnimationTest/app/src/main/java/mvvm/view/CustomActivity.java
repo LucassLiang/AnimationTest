@@ -15,15 +15,13 @@ import mvvm.viewmodel.CustomViewModel;
  */
 
 public class CustomActivity extends AppCompatActivity {
-    private ActivityCustomBinding binding;
-    private CustomViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Custom View");
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_custom);
-        viewModel = new CustomViewModel(this, binding);
+        ActivityCustomBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_custom);
+        CustomViewModel viewModel = new CustomViewModel(this, binding);
         binding.setViewModel(viewModel);
     }
 

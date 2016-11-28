@@ -15,14 +15,12 @@ import mvvm.viewmodel.LoginViewModel;
  */
 
 public class LoginActivity extends AppCompatActivity {
-    private ActivityLoginBinding binding;
-    private LoginViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        viewModel = new LoginViewModel(this,binding);
+        ActivityLoginBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        LoginViewModel viewModel = new LoginViewModel(this,binding);
         binding.setViewModel(viewModel);
     }
 

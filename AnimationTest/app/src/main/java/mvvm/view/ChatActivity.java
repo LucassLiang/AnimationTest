@@ -15,14 +15,13 @@ import mvvm.viewmodel.ChatViewModel;
  */
 
 public class ChatActivity extends AppCompatActivity {
-    private ActivityChatBinding binding;
     private ChatViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Chatting Room");
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
+        ActivityChatBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         viewModel = new ChatViewModel(this, binding);
         viewModel.onCreate();
         binding.setViewModel(viewModel);

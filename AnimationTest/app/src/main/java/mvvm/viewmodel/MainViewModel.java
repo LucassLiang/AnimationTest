@@ -28,8 +28,9 @@ import mvvm.adapter.ImagePagerAdapter;
 import mvvm.adapter.PictureAdapter;
 import mvvm.model.Image;
 import mvvm.transformer.ImagePageTransformer;
-import mvvm.view.LoginActivity;
+import mvvm.view.BlueToothActivity;
 import mvvm.view.CustomActivity;
+import mvvm.view.LoginActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -178,6 +179,9 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                 break;
             case R.id.action_chat:
                 startAnimation(LoginActivity.class, R.layout.activity_login);
+                break;
+            case R.id.action_blue_tooth:
+                startAnimation(BlueToothActivity.class, R.layout.activity_blue_tooth);
                 break;
         }
         return true;

@@ -16,4 +16,7 @@
     <item
         android:id="@+id/action_chat"
         android:title="chat" />
+
+    <item android:id="@+id/action_blue_tooth"
+        android:title="blue tooth"/>
 </menu>
