@@ -46,6 +46,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
+        <activity
+            android:name="mvvm.view.MapActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+
         <service android:name="com.avos.avoscloud.PushService" />
 
         <receiver android:name="mvvm.listener.NotificationReceiver" />
@@ -55,6 +60,10 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDBGo-N1cs2lz1FSA6qfc3rh_0vO4JxklU" />
 
     </application>
 

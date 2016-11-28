@@ -1,9 +1,9 @@
 package util;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.im.v2.AVIMMessageManager;
@@ -15,7 +15,7 @@ import mvvm.listener.MessageReceiver;
  * Created by lucas on 21/11/2016.
  */
 
-public class BaseApp extends Application {
+public class BaseApp extends MultiDexApplication {
     private static BaseApp baseApp;
 
     public static <T extends BaseApp> T BaseApp() {

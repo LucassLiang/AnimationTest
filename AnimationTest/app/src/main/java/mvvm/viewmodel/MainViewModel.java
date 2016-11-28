@@ -3,6 +3,7 @@ package mvvm.viewmodel;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -15,9 +16,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMainBinding;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.List;
@@ -31,6 +35,7 @@ import mvvm.transformer.ImagePageTransformer;
 import mvvm.view.BlueToothActivity;
 import mvvm.view.CustomActivity;
 import mvvm.view.LoginActivity;
+import mvvm.view.MapActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -182,6 +187,14 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                 break;
             case R.id.action_blue_tooth:
                 startAnimation(BlueToothActivity.class, R.layout.activity_blue_tooth);
+                break;
+            case R.id.action_map:
+                if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+                    Intent intent = new Intent(context, MapActivity.class);
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, "Google play service not found,please install Google play service.", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
         return true;
