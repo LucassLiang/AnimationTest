@@ -16,8 +16,6 @@ import com.google.android.m4b.maps.model.MarkerOptions;
 
 import mvvm.viewmodel.MapVModel;
 
-import static com.example.lucas.animationtest.R.id.map;
-
 /**
  * Created by lucas on 2016/11/28.
  */
@@ -28,7 +26,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         super.onCreate(savedInstanceState);
         ActivityMapBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(map);
+                .findFragmentById(R.id.fragment_map);
         mapFragment.getMapAsync(this);
         MapVModel mapVModel = new MapVModel(this, binding);
         binding.setViewModel(mapVModel);

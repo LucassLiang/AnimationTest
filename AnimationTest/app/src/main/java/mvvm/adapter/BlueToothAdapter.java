@@ -2,6 +2,7 @@ package mvvm.adapter;
 
 import android.content.Context;
 
+import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ItemBlueToothBinding;
 
 import mvvm.viewholder.BaseViewHolder;
@@ -23,5 +24,10 @@ public class BlueToothAdapter extends ListAdapter<BlueToothItemVModel, ItemBlueT
         super.onBindViewDataBinding(holder, position);
         binding = holder.getbinding();
         binding.setViewModel(get(position));
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return R.layout.item_blue_tooth;
     }
 }

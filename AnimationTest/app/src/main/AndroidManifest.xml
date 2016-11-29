@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name="util.BaseApp"
@@ -63,7 +64,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDBGo-N1cs2lz1FSA6qfc3rh_0vO4JxklU" />
+            android:value="@string/google_map_key" />
 
     </application>
 

@@ -17,8 +17,9 @@ import mvvm.viewholder.BaseViewHolder;
 public class PictureAdapter extends ListAdapter<mvvm.model.Image, ItemPictureBinding> {
     private ItemPictureBinding binding;
     private View.OnClickListener mListener;
-    private int clickPosition;
     private HashMap<Integer, View> views = new HashMap<>();
+
+    private int clickPosition;
 
     public PictureAdapter(Context mContext, View.OnClickListener mListener) {
         super(mContext);

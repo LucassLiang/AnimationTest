@@ -138,7 +138,7 @@ public class LoadingView extends View {
         canvas.drawPath(dst, mPaint);
     }
 
-    public void startAnimator() {
+    public void startLoading() {
         setOver(false);
         searchAnimator.start();
     }

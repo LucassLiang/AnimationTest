@@ -7,6 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Toast;
@@ -21,9 +25,11 @@ import mvvm.adapter.BlueToothAdapter;
 
 public class BlueToothVModel {
     public static final int REQUEST_CODE = 1;
+    public static final int REQUEST_LOCATION = 1;
     private ActivityBlueToothBinding binding;
     private BlueToothAdapter deviceAdapter;
     private BluetoothAdapter mAdapter;
+    private BroadcastReceiver mReceiver;
     private Context context;
 
     public BlueToothVModel(ActivityBlueToothBinding binding, Context context) {
@@ -42,6 +48,10 @@ public class BlueToothVModel {
         if (mAdapter == null) {
             binding.switchOpen.setEnabled(false);
             Toast.makeText(context, "Your device don't support Blue Tooth", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (mAdapter.isEnabled()) {
+            binding.switchOpen.setChecked(true);
         }
     }
 
@@ -54,7 +64,7 @@ public class BlueToothVModel {
     }
 
     private void initReceiver() {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -66,8 +76,29 @@ public class BlueToothVModel {
                 }
             }
         };
+        checkLocationPermission();
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        context.registerReceiver(receiver, intentFilter);
+        context.registerReceiver(mReceiver, intentFilter);
+    }
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) context,
+                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_LOCATION);
+        }
+    }
+
+    public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    context.registerReceiver(mReceiver, intentFilter);
+                }
+                break;
+        }
     }
 
     public void controlBlueTooth(View view) {
@@ -78,9 +109,9 @@ public class BlueToothVModel {
             mAdapter.disable();
             mAdapter.cancelDiscovery();
             binding.switchOpen.setChecked(false);
-            deviceAdapter.clear();
-            deviceAdapter.notifyItemRangeRemoved(0, deviceAdapter.size());
         }
+        deviceAdapter.clear();
+        deviceAdapter.notifyDataSetChanged();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -88,11 +119,20 @@ public class BlueToothVModel {
             switch (requestCode) {
                 case REQUEST_CODE:
                     mAdapter.enable();
-                    binding.switchOpen.setChecked(true);
                     //discover device by blue tooth
                     mAdapter.startDiscovery();
                     break;
             }
+        } else {
+            binding.switchOpen.setChecked(false);
         }
+    }
+
+    public void onDestroy() {
+        context.unregisterReceiver(mReceiver);
+    }
+
+    public BluetoothAdapter getmAdapter() {
+        return mAdapter;
     }
 }
