@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -32,7 +35,7 @@ import mvvm.adapter.MarkInfoAdapter;
  * Created by lucas on 2016/11/28.
  */
 
-public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     public static final int LOCATION_REQUEST = 2;
     public static final int MY_LOCATION_REQUEST = 3;
     public static final int PLACE_PICK_REQUEST = 4;
@@ -41,6 +44,7 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     private ActivityMapBinding binding;
     private FragmentActivity context;
     private GoogleMap mMap;
+    private GoogleApiClient mClient;
 
     public MapVModel(FragmentActivity context, ActivityMapBinding binding) {
         this.context = context;
@@ -60,6 +64,8 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
         mMap = googleMap;
         googleMap.setInfoWindowAdapter(markAdapter);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setBuildingsEnabled(true);
+        googleMap.setIndoorEnabled(true);
         googleMap.setOnMapClickListener(this);
         googleMap.setOnMarkerClickListener(this);
         if (checkPermission(MY_LOCATION_REQUEST)) return;
@@ -81,8 +87,10 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     public void onMapClick(LatLng latLng) {
         mMap.clear();
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        builder.setLatLngBounds(new LatLngBounds(latLng, latLng));
         try {
             context.startActivityForResult(builder.build(context), PLACE_PICK_REQUEST);
+            context.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
@@ -128,5 +136,15 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(context, "GoogleApiClient connection failed, please try again.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }
