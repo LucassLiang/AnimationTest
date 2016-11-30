@@ -1,14 +1,24 @@
 package mvvm.viewmodel;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.example.lucas.animationtest.R;
 import com.example.lucas.animationtest.databinding.ActivityMapBinding;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,9 +32,10 @@ import mvvm.adapter.MarkInfoAdapter;
  * Created by lucas on 2016/11/28.
  */
 
-public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, GoogleApiClient.OnConnectionFailedListener {
     public static final int LOCATION_REQUEST = 2;
     public static final int MY_LOCATION_REQUEST = 3;
+    public static final int PLACE_PICK_REQUEST = 4;
 
     private MarkInfoAdapter markAdapter;
     private ActivityMapBinding binding;
@@ -66,6 +77,34 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
         return false;
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        mMap.clear();
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            context.startActivityForResult(builder.build(context), PLACE_PICK_REQUEST);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case PLACE_PICK_REQUEST:
+                    mMap.clear();
+                    Place place = PlacePicker.getPlace(context, data);
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(place.getLatLng())
+                            .title(place.getName().toString())
+                            .snippet(place.getAddress().toString()));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                    marker.showInfoWindow();
+                    break;
+            }
+        }
+    }
+
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_REQUEST:
@@ -81,16 +120,13 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
-        double latitude = latLng.latitude;
-        double longitude = latLng.longitude;
-        mMap.clear();
-        Marker marker = mMap.addMarker(new MarkerOptions().position(latLng));
-    }
-
-    @Override
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();
         return true;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(context, "GoogleApiClient connection failed, please try again.", Toast.LENGTH_SHORT).show();
     }
 }

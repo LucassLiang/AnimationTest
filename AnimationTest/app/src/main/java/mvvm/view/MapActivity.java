@@ -1,5 +1,6 @@
 package mvvm.view;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,12 @@ public class MapActivity extends FragmentActivity {
         mapVModel = new MapVModel(this, binding);
         binding.setViewModel(mapVModel);
         mapVModel.onCreate();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mapVModel.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
