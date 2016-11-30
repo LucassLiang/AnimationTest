@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.example.lucas.animationtest.R;
@@ -28,8 +27,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import mvvm.adapter.MarkInfoAdapter;
+import rx.functions.Action1;
 
 /**
  * Created by lucas on 2016/11/28.
@@ -45,6 +46,7 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     private FragmentActivity context;
     private GoogleMap mMap;
     private GoogleApiClient mClient;
+    private RxPermissions rxPermissions;
 
     public MapVModel(FragmentActivity context, ActivityMapBinding binding) {
         this.context = context;
@@ -52,11 +54,16 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     }
 
     public void onCreate() {
-        if (checkPermission(LOCATION_REQUEST)) return;
+        rxPermissions = new RxPermissions(context);
+        checkPermission(LOCATION_REQUEST);
+        initMapFragment();
+        markAdapter = new MarkInfoAdapter();
+    }
+
+    private void initMapFragment() {
         SupportMapFragment mapFragment = (SupportMapFragment) context.getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_map);
         mapFragment.getMapAsync(this);
-        markAdapter = new MarkInfoAdapter();
     }
 
     @Override
@@ -68,19 +75,30 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
         googleMap.setIndoorEnabled(true);
         googleMap.setOnMapClickListener(this);
         googleMap.setOnMarkerClickListener(this);
-        if (checkPermission(MY_LOCATION_REQUEST)) return;
-        googleMap.setMyLocationEnabled(true);
+        checkPermission(MY_LOCATION_REQUEST);
     }
 
-    private boolean checkPermission(int requestCode) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(context,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    requestCode);
-            return true;
-        }
-        return false;
+    private void checkPermission(final int requestCode) {
+        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean granted) {
+                        if (granted) {
+                            switch (requestCode) {
+                                case LOCATION_REQUEST:
+                                    initMapFragment();
+                                    break;
+                                case MY_LOCATION_REQUEST:
+                                    mMap.setMyLocationEnabled(true);
+                                    break;
+                            }
+                        } else {
+                            ActivityCompat.requestPermissions(context,
+                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    requestCode);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -116,13 +134,14 @@ public class MapVModel implements OnMapReadyCallback, GoogleMap.OnMapClickListen
     public void onPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_REQUEST:
-                SupportMapFragment mapFragment = (SupportMapFragment) context.getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_map);
-                mapFragment.getMapAsync(this);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initMapFragment();
+                }
                 break;
             case MY_LOCATION_REQUEST:
-                if (checkPermission(MY_LOCATION_REQUEST)) return;
-                mMap.setMyLocationEnabled(true);
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mMap.setMyLocationEnabled(true);
+                }
                 break;
         }
     }
