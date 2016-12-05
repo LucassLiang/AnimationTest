@@ -35,6 +35,7 @@ import mvvm.transformer.ImagePageTransformer;
 import mvvm.view.BlueToothActivity;
 import mvvm.view.CustomActivity;
 import mvvm.view.LoginActivity;
+import mvvm.view.MainActivity;
 import mvvm.view.MapActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -222,7 +223,10 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-        context.recreate();
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+        context.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        context.finish();
     }
 
     @Override
