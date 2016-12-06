@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
+import com.antfortune.freeline.FreelineCore;
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.im.v2.AVIMMessageManager;
 import com.example.lucas.animationtest.R;
@@ -26,6 +27,7 @@ public class BaseApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         baseApp = this;
+        FreelineCore.init(this);
         AVOSCloud.initialize(this, getString(R.string.avos_app_id), getString(R.string.avos_app_key));
 
         AVIMMessageManager.registerDefaultMessageHandler(new MessageReceiver(this));
