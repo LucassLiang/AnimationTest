@@ -37,6 +37,7 @@ import mvvm.view.CustomActivity;
 import mvvm.view.LoginActivity;
 import mvvm.view.MainActivity;
 import mvvm.view.MapActivity;
+import mvvm.view.QRActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -196,6 +197,11 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                 } else {
                     Toast.makeText(context, "Google play service not found,please install Google play service.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.action_boom:
+                break;
+            case R.id.action_qr:
+                context.startActivity(new Intent(context, QRActivity.class));
                 break;
         }
         return true;

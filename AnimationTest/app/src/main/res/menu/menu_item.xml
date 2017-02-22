@@ -24,4 +24,12 @@
     <item
         android:id="@+id/action_map"
         android:title="map demo" />
+
+    <item
+        android:id="@+id/action_boom"
+        android:title="boom menu" />
+
+    <item
+        android:id="@+id/action_qr"
+        android:title="qr scanner" />
 </menu>

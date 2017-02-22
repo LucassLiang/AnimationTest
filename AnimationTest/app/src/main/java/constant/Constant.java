@@ -12,4 +12,6 @@ public class Constant {
     public final static String USER_ID = "USER_ID";
     public final static String MEMBER_ID = "MEMBER_ID";
     public final static String CONVERSATION_ID = "CONVERSATION_ID";
+
+    public final static int REQUEST_SCAN = 2;
 }
