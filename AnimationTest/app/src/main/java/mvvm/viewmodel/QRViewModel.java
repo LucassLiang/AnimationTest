@@ -28,13 +28,13 @@ import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.util.Hashtable;
-
-import constant.Constant;
 
 /**
  * Created by lucas on 2017/2/21.
@@ -54,13 +54,13 @@ public class QRViewModel {
     }
 
     private void initListener() {
-//        binding.ivQr.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                analysisQRCode();
-//                return true;
-//            }
-//        });
+        binding.ivQr.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                analysisQRCode(((BitmapDrawable) binding.ivQr.getDrawable()).getBitmap());
+                return true;
+            }
+        });
     }
 
     private void analysisQRCode(Bitmap bitmap) {
@@ -111,15 +111,19 @@ public class QRViewModel {
                     ActivityCompat.requestPermissions((Activity) mContext, new String[]{"android.permission.CAMERA"}, 1);
                     break;
                 }
-                ((Activity) mContext).startActivityForResult(new Intent(mContext, com.google.zxing.client.android.CaptureActivity.class), Constant.REQUEST_SCAN);
+                intentToCaptureActivity();
                 break;
             case R.id.btn_make:
                 makeQR(400, 400);
                 break;
-            case R.id.iv_qr:
-                analysisQRCode(((BitmapDrawable) binding.ivQr.getDrawable()).getBitmap());
-                break;
         }
+    }
+
+    private void intentToCaptureActivity() {
+        IntentIntegrator integrator = new IntentIntegrator((Activity) mContext);
+        integrator.setCaptureLayout(R.layout.zxing_capture);
+        integrator.setPrompt("place the qr code for more detail");
+        integrator.initiateScan();
     }
 
     /**
@@ -159,23 +163,20 @@ public class QRViewModel {
         }
     }
 
-    public void onRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionResult(@NonNull int[] grantResults) {
         for (int i = 0; i < grantResults.length; i++) {
             if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                 Toast.makeText(mContext, "权限被禁止", Toast.LENGTH_SHORT);
                 return;
             }
         }
-        ((Activity) mContext).startActivityForResult(new Intent(mContext, com.google.zxing.client.android.CaptureActivity.class), Constant.REQUEST_SCAN);
+        intentToCaptureActivity();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case Constant.REQUEST_SCAN: {
-                    Toast.makeText(mContext, "result:" + data.toString(), Toast.LENGTH_SHORT);
-                }
-            }
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (intentResult != null) {
+            Snackbar.make(binding.rlContent, intentResult.getContents(), Snackbar.LENGTH_SHORT).show();
         }
     }
 }

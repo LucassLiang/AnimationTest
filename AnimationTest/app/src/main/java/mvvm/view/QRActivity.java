@@ -30,7 +30,7 @@ public class QRActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        viewModel.onRequestPermissionResult(requestCode, permissions, grantResults);
+        viewModel.onRequestPermissionResult(grantResults);
     }
 
     @Override

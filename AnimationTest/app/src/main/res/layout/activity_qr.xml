@@ -51,8 +51,7 @@
             android:layout_below="@id/btn_make"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
-            android:clickable="true"
-            android:onClick="@{viewModel.buttonClick}" />
+            android:clickable="true" />
 
     </RelativeLayout>
 </layout>

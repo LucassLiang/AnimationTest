@@ -64,6 +64,10 @@
             android:name="mvvm.view.QRActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name="mvvm.view.CustomCaptureActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name="com.avos.avoscloud.PushService" />
 
         <receiver android:name="mvvm.listener.NotificationReceiver" />
