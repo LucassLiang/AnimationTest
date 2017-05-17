@@ -38,8 +38,10 @@ import mvvm.view.LoginActivity;
 import mvvm.view.MainActivity;
 import mvvm.view.MapActivity;
 import mvvm.view.QRActivity;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Actions;
 import rx.schedulers.Schedulers;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -135,20 +137,22 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
         ApiService.getPictureService().getPicture(tag)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ImageDTO>() {
+                .doOnCompleted(new Action0() {
                     @Override
-                    public void onCompleted() {
+                    public void call() {
                         binding.srlLayout.setRefreshing(false);
                     }
-
+                })
+                .doOnNext(new Action1<ImageDTO>() {
                     @Override
-                    public void onError(Throwable e) {
-                        Log.e("TAG", "onError: " + e.toString());
-                    }
-
-                    @Override
-                    public void onNext(ImageDTO imageDTO) {
+                    public void call(ImageDTO imageDTO) {
                         handleData(imageDTO, needRefresh);
+                    }
+                })
+                .subscribe(Actions.empty(), new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e("TAG", "onError: " + throwable.toString());
                     }
                 });
     }
@@ -168,6 +172,7 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
         }
         mAdapter.notifyDataSetChanged();
         vpAdapter.notifyDataSetChanged();
+
     }
 
     @Override
