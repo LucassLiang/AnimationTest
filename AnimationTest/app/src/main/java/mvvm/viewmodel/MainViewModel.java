@@ -33,6 +33,7 @@ import mvvm.adapter.PictureAdapter;
 import mvvm.model.Image;
 import mvvm.transformer.ImagePageTransformer;
 import mvvm.view.BlueToothActivity;
+import mvvm.view.BoomActivity;
 import mvvm.view.CustomActivity;
 import mvvm.view.LoginActivity;
 import mvvm.view.MainActivity;
@@ -204,6 +205,7 @@ public class MainViewModel implements Toolbar.OnMenuItemClickListener, ViewPager
                 }
                 break;
             case R.id.action_boom:
+                context.startActivity(new Intent(context, BoomActivity.class));
                 break;
             case R.id.action_qr:
                 context.startActivity(new Intent(context, QRActivity.class));
