@@ -21,7 +21,7 @@ public class BoomActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityBoomBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_boom);
-        viewModel = new BoomViewModel(this);
+        viewModel = new BoomViewModel(this, binding);
         binding.setViewModel(viewModel);
         viewModel.onCreate();
     }
